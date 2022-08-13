@@ -19,12 +19,12 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "joecowin_rg" {
-  name     = "joecowin"
-  location = "North Europe"
+  name     = var.name
+  location = var.location
 }
 
 resource "azurerm_virtual_network" "joecowin_vnet" {
-  name                = "joecowin-network"
+  name                = "${var.name}-network"
   resource_group_name = azurerm_resource_group.joecowin_rg.name
   location            = azurerm_resource_group.joecowin_rg.location
   address_space       = ["10.0.0.0/16"]
