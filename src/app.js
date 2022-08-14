@@ -1,3 +1,5 @@
+let appInsights = require('applicationinsights');
+appInsights.setup("InstrumentationKey=d64eb4f6-db68-4925-9257-42cf401fe8e3;IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/").start();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
