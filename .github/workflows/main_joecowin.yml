@@ -53,6 +53,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'joecowin'
-          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6EC145EA0100418C946077776CFAA159 }}
-          package: .
+          package: joecowin
