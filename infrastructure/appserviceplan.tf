@@ -3,7 +3,7 @@ resource "azurerm_service_plan" "joecowin_asp" {
   resource_group_name = azurerm_resource_group.joecowin_rg.name
   location            = azurerm_resource_group.joecowin_rg.location
   os_type             = "Linux"
-  sku_name            = "F1"
+  sku_name            = "B1"
 }
 
 resource "azurerm_linux_web_app" "joecowin" {
