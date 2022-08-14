@@ -6,6 +6,12 @@ resource "azurerm_service_plan" "joecowin_asp" {
   sku_name            = "B1"
 }
 
+resource "azurerm_static_site" "joecowin" {
+  name                = var.name
+  resource_group_name = azurerm_resource_group.joecowin_rg.name
+  location            = azurerm_resource_group.joecowin_rg.location
+}
+
 resource "azurerm_linux_web_app" "joecowin" {
   name                = var.name
   resource_group_name = azurerm_resource_group.joecowin_rg.name
