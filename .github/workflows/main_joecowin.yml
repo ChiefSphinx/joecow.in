@@ -54,4 +54,4 @@ jobs:
         with:
           app-name: 'joecowin'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6EC145EA0100418C946077776CFAA159 }}
-          package: joecowin
+          package: joecow.in
