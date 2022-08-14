@@ -48,10 +48,14 @@ jobs:
         with:
           name: joecowin
 
+      - name: TEST
+        run: |
+          ls -la
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'joecowin'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6EC145EA0100418C946077776CFAA159 }}
-          package: joecow.in
+          package: .
