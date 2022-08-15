@@ -1,21 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
-import wordflick from './textTyping'
+import React from "react";
+import "./App.css";
+import Header from "./Header";
+import Body from "./Body";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          <code>JOECOW.IN@LOCALHOST:~$</code><code className="App-cursor"> _</code>
-        </p>
-        <code>HI!</code>
-        <code>MY NAME IS JOSEPH COWIN</code>
-        <code>I❤️</code><code className="App-cursor"> _</code>
-        
-      </header>
-    </div>
-  );
+export default class App extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <Header />
+        <Body />
+      </div>
+    );
+  }
 }
-
-export default App;
