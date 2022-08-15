@@ -1,0 +1,10 @@
+.App-body {
+  display: inline-block;
+  text-align: left;
+
+  font-size: calc(10px + 2vmin);
+}
+
+.component-body {
+  text-align: center;
+}
