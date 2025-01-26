@@ -176,3 +176,7 @@ cython_debug/
 
 .vscode
 .sesskey
+
+# Docker
+.docker/
+docker-compose.override.yml
