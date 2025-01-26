@@ -28,7 +28,7 @@ jobs:
         with:
           type: deployment
           operation: create
-          name: Deploy Bicep
+          name: deploy-bicep
           location: westeurope
           scope: subscription
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
