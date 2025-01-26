@@ -31,5 +31,5 @@ jobs:
           name: Deploy Bicep
           location: westeurope
           scope: subscription
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           template-file: ./infrastructure/deploy.bicep
