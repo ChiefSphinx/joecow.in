@@ -20,4 +20,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: chiefsphinx/joecow.in:latest
       # Add deployment steps here once container registry is set up 
