@@ -8,28 +8,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Docker Login
+        uses: docker/login-action@v3
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Build and push container image to registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-      
-      - name: Build and push image
-        run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/joecowin:${{ github.sha }}
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/joecowin:${{ github.sha }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Add deployment steps here once container registry is set up 
