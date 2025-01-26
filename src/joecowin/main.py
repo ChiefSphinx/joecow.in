@@ -25,6 +25,7 @@ app, rt = fast_app(
                 line-height: 1.6;
                 height: 100vh;
                 overflow: hidden;
+                font-size: 1.2rem;
             }
             
             .nav {
@@ -52,16 +53,24 @@ app, rt = fast_app(
                 border-bottom: none;
                 text-align: center;
                 white-space: nowrap;
+                font-size: 1.0rem;
             }
             
-            .nav-links a:hover,
+            .nav-links a:hover {
+                background: var(--tab-active);
+            }
+            
             .nav-links a.active {
                 background: var(--tab-active);
+                border-bottom: 1px solid var(--tab-active);
+                margin-bottom: -1px;
             }
             
             .window-controls {
                 display: flex;
                 align-items: stretch;
+                gap: 2px;
+                padding-right: 2px;
             }
             
             .window-btn {
@@ -69,11 +78,13 @@ app, rt = fast_app(
                 text-decoration: none;
                 padding: 8px 16px;
                 background: var(--tab-bg);
-                border: none;
-                border-left: 1px solid var(--tab-border);
+                border-radius: 4px 4px 0 0;
+                border: 1px solid var(--tab-border);
+                border-bottom: none;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
+                font-size: 1.2rem;
             }
             
             .minimize-btn:hover {
@@ -104,11 +115,13 @@ app, rt = fast_app(
             .title {
                 font-weight: bold;
                 margin-bottom: 1rem;
+                font-size: 1.4rem;
             }
             
             .prompt {
                 font-weight: bold;
                 margin-bottom: 1rem;
+                font-size: 1.4rem;
             }
                         
             .prompt::after {
@@ -134,7 +147,7 @@ app, rt = fast_app(
             
             p {
                 margin: 0.5rem 0;
-                font-size: 1.1rem;
+                font-size: 1.3rem;
             }
             
             .terminal-effect::before {
