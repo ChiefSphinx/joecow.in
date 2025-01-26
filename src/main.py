@@ -2,6 +2,7 @@ from fasthtml.common import *
 
 app, rt = fast_app(
     hdrs=(
+        Title("joecow.in"),
         Style("""
             :root {
                 --text-color: #00ff00;
