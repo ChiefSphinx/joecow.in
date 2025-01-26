@@ -5,8 +5,8 @@ param location string
 param application string
 
 // Variables for resource naming
-var appServicePlanName = '${application}-plan'
-var webAppName = '${application}-app'
+var appServicePlanName = 'asp-${application}-prod-westeurope'
+var webAppName = 'app-${application}-prod-westeurope'
 
 // App Service Plan (Free Tier)
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
