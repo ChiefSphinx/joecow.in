@@ -25,4 +25,19 @@ jobs:
         with:
           push: true
           tags: chiefsphinx/joecow.in:latest
-      # Add deployment steps here once container registry is set up 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Docker Image
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: app-joecowin-prod-westeurope
+          slot-name: production
+          images: chiefsphinx/joecow.in:latest
+
