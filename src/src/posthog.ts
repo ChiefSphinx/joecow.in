@@ -4,13 +4,13 @@ import posthog from 'posthog-js'
 export const initPostHog = () => {
   // Only initialize PostHog in production or when explicitly enabled
   const isProduction = import.meta.env.MODE === 'production'
-  const enableAnalytics = import.meta.env.ENABLE_ANALYTICS === 'true'
+  const enableAnalytics = import.meta.env.VITE_ENABLE_ANALYTICS === 'true'
   
   if (isProduction || enableAnalytics) {
     posthog.init(
-      import.meta.env.POSTHOG_KEY,
+      import.meta.env.VITE_POSTHOG_KEY,
       {
-        api_host: import.meta.env.POSTHOG_HOST,
+        api_host: import.meta.env.VITE_POSTHOG_HOST,
         // Disable in development unless explicitly enabled
         loaded: (posthog) => {
           if (import.meta.env.MODE === 'development') {
