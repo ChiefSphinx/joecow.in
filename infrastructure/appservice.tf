@@ -16,6 +16,7 @@ resource "azurerm_linux_web_app" "main" {
     application_stack {
       docker_image_name = "chiefsphinx/joecow.in:latest"
     }
+    always_on = false
   }
 
   app_settings = {
