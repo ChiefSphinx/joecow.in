@@ -28,3 +28,9 @@ resource "azurerm_linux_web_app" "main" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
   }
 }
+
+resource "azurerm_app_service_custom_hostname_binding" "main" {
+  hostname            = "joecow.in"
+  app_service_name    = azurerm_linux_web_app.main.name
+  resource_group_name = azurerm_resource_group.main.name
+}
