@@ -1,25 +1,38 @@
-# Build stage
+# Stage 1: The Builder
 FROM node:18-alpine AS build
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files from your 'src' directory
 COPY src/package.json src/package-lock.json ./
 
-# Install dependencies
+# Install dependencies using ci for reproducible builds
 RUN npm ci
 
-# Copy source code
+# Copy the rest of your source code from the 'src' directory
 COPY src/ ./
 
-# Build the application
-RUN npm run build
+# --- CHANGES START HERE ---
 
-# Production stage
+# Declare build arguments that will be passed from the CI/CD pipeline.
+# These will be used by the Vite build process.
+ARG VITE_POSTHOG_KEY
+ARG VITE_POSTHOG_HOST
+
+# Build the application, providing the ARGs as environment variables
+# to the npm script. Vite will replace import.meta.env variables with these values.
+RUN VITE_POSTHOG_KEY=$VITE_POSTHOG_KEY \
+    VITE_POSTHOG_HOST=$VITE_POSTHOG_HOST \
+    npm run build
+
+# --- CHANGES END HERE ---
+
+
+# Stage 2: The Production Server
 FROM nginx:alpine
 
-# Copy built application from build stage
+# Copy built application from the 'build' stage's /app/dist directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
@@ -28,5 +41,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Expose port 80
 EXPOSE 80
 
-# Start nginx
+# Start nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]

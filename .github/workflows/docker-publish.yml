@@ -38,6 +38,9 @@ jobs:
           tags: |
             chiefsphinx/joecow.in:latest
             chiefsphinx/joecow.in:${{ steps.vars.outputs.SHORT_SHA }}
+          build-args: |
+            VITE_POSTHOG_KEY=${{ secrets.VITE_POSTHOG_KEY }}
+            VITE_POSTHOG_HOST=${{ secrets.VITE_POSTHOG_HOST }}
 
   deploy-to-appservice:
     needs: build-and-push
