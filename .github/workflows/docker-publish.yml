@@ -23,10 +23,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract short SHA
+        id: vars
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: chiefsphinx/joecow.in:latest
+          tags: |
+            chiefsphinx/joecow.in:latest
+            chiefsphinx/joecow.in:${{ steps.vars.outputs.SHORT_SHA }}
