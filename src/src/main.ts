@@ -1,4 +1,5 @@
 import './style.css'
+import { initPostHog, trackCommandUsage, trackButtonClick, trackTerminalSession, trackPageView } from './posthog'
 
 class Terminal {
   private container: HTMLDivElement;
@@ -47,9 +48,18 @@ class Terminal {
     const minimizeBtn = document.querySelector<HTMLSpanElement>('#minimize-btn')!;
     const maximizeBtn = document.querySelector<HTMLSpanElement>('#maximize-btn')!;
 
-    closeBtn.addEventListener('click', () => this.showBSOD());
-    minimizeBtn.addEventListener('click', () => this.minimizeTerminal());
-    maximizeBtn.addEventListener('click', () => this.maximizeTerminal());
+    closeBtn.addEventListener('click', () => {
+      trackButtonClick('close');
+      this.showBSOD();
+    });
+    minimizeBtn.addEventListener('click', () => {
+      trackButtonClick('minimize');
+      this.minimizeTerminal();
+    });
+    maximizeBtn.addEventListener('click', () => {
+      trackButtonClick('maximize');
+      this.maximizeTerminal();
+    });
   }
 
   private showBSOD() {
@@ -155,6 +165,9 @@ class Terminal {
 
   private async executeCommand(command: string) {
     const cmd = command.trim().toLowerCase();
+    
+    // Track command usage
+    trackCommandUsage(cmd);
     
     // Add command to output
     this.addToOutput(`joe@joecow.in:~$ ${command}`);
@@ -276,5 +289,14 @@ projects/
   }
 }
 
+// Initialize PostHog
+initPostHog();
+
+// Track page view
+trackPageView('Terminal Home');
+
 // Initialize terminal when page loads
-new Terminal();
+const terminal = new Terminal();
+
+// Track terminal session start
+trackTerminalSession('start');
