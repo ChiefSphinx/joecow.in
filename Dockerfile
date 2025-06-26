@@ -1,16 +1,32 @@
-FROM python:3.11-slim
+# Build stage
+FROM node:18-alpine AS build
 
+# Set working directory
 WORKDIR /app
 
+# Copy package files
+COPY src/package.json src/package-lock.json ./
+
 # Install dependencies
-COPY src/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN npm ci
 
-# Copy application code
-COPY src/main.py .
+# Copy source code
+COPY src/ ./
 
-# Expose port
-EXPOSE 5001
+# Build the application
+RUN npm run build
 
-# Run the application
-CMD ["python", "main.py"] 
+# Production stage
+FROM nginx:alpine
+
+# Copy built application from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

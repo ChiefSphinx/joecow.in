@@ -1,13 +1,9 @@
 version: '3.8'
 
 services:
-  web:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+  joecow-in:
+    build: .
     ports:
-      - "6969:5001"
-    volumes:
-      - ./src:/app
-    environment:
-      - PYTHONUNBUFFERED=1 
+      - "3000:80"
+    restart: unless-stopped
+    container_name: joecow-in-app
