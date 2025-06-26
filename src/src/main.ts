@@ -296,7 +296,7 @@ initPostHog();
 trackPageView('Terminal Home');
 
 // Initialize terminal when page loads
-const terminal = new Terminal();
+new Terminal();
 
 // Track terminal session start
 trackTerminalSession('start');
