@@ -22,6 +22,7 @@ resource "azurerm_linux_web_app" "main" {
     ftps_state = "Disabled"
     http2_enabled = true
     minimum_tls_version = "1.2"
+    health_check_path = "/healthz"
   }
 
   app_settings = {
