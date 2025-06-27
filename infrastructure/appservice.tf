@@ -27,4 +27,11 @@ resource "azurerm_linux_web_app" "main" {
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
   }
+
+  lifecycle {
+    ignore_changes = [
+      app_settings,
+      site_config[0].application_stack[0].docker_image_name
+    ]
+  }
 }
