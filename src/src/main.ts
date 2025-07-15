@@ -333,7 +333,7 @@ initPostHog();
 trackPageView('Terminal Home');
 
 // Initialize terminal when page loads
-let terminalInstance = new Terminal();
+new Terminal();
 
 // Track terminal session start
 trackTerminalSession('start');
@@ -349,6 +349,6 @@ desktopDiv.addEventListener('click', (e) => {
     appDiv.style.display = 'block';
     desktopDiv.style.display = 'none';
     // Re-initialize terminal
-    terminalInstance = new Terminal();
+    new Terminal();
   }
 });
