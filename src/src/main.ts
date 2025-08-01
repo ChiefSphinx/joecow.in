@@ -1,6 +1,7 @@
 import './style.css'
 import { initPostHog, trackCommandUsage, trackButtonClick, trackTerminalSession, trackPageView } from './posthog'
 import { SnakeGame } from './snake'
+import { formatCV, formatHelp, formatFiles, getWelcomeMessages } from '../utils/content-loader'
 
 class Terminal {
   private container: HTMLDivElement;
@@ -167,8 +168,9 @@ class Terminal {
   }
 
   private async startTerminal() {
-    await this.typeText('Welcome to Joe Cowin\'s Terminal\n', 0);
-    await this.typeText('Type "help" for available commands\n\n', 0);
+    const welcome = getWelcomeMessages();
+    await this.typeText(`${welcome.greeting}\n`, 0);
+    await this.typeText(`${welcome.instruction}\n\n`, 0);
     this.showPrompt();
     this.setupEventListeners();
   }
@@ -270,17 +272,17 @@ class Terminal {
   }
 
   private async showHelp() {
-    const helpText = `\nAvailable commands:\n  help          - Show this help message\n  cv            - Display my CV/resume\n  cat cv.txt    - Display my CV/resume\n  ls            - List files\n  whoami        - Show current user\n  date          - Show current date/time\n  clear         - Clear terminal\n`;
+    const helpText = formatHelp();
     await this.typeText(helpText, 0);
   }
 
   private async showCV() {
-    const cvContent = `\nName: Joe Cowin\nTitle: Information Security Engineer\nAbout: Passionate engineer with expertise in DevSecOps, cloud security, and infrastructure automation. Specializes in Azure technologies, security compliance, and building scalable cloud-native solutions.\n\nExperience:\n\n🏢 Derivco Málaga (Full-time · 3 yrs 2 mos) | Málaga, Andalusia, Spain\n\n  📍 Information Security Engineer (Feb 2025 - Jul 2025 · 6 mos)\n  • Administered and enhanced Azure policy management, transitioning to Azure EPAC for improved compliance\n  • Implemented AzGovViz for governance visualisation, strengthening control coverage and best practices\n  • Drove the adoption of Wiz, enabling teams to proactively identify security risks earlier in the software lifecycle\n  Skills: Azure Policy, Azure EPAC, Wiz, Governance, Compliance\n\n  📍 Senior IT Engineer (Feb 2024 - Jan 2025 · 1 yr)\n  • Led DevSecOps initiatives, collaborating with cross-functional teams to launch an AI promotions tool on Azure Kubernetes Service\n  • Engineered secure Azure environments using Terraform, enhancing deployment efficiency through robust CI/CD pipelines\n  • Implemented CNCF best practices, resulting in accelerated delivery of scalable cloud-native solutions\n  • Proactively managed post-launch operations, resolving critical production issues to ensure optimal performance\n  Skills: DevSecOps, Azure Kubernetes Service (AKS), Terraform, CI/CD, CNCF\n\n  📍 IT Engineer (Jun 2022 - Feb 2024 · 1 yr 9 mos)\n  • Seeded and trained a new technical team, enhancing operational capabilities\n  • Automated cloud infrastructure deployments using Terraform, significantly improving scalability and maintainability\n  • Proactively monitored and resolved production incidents, ensuring minimal business disruption and high system uptime\n  Skills: Terraform, Observability, Team Leadership, Infrastructure Automation\n\n🏢 Derivco Isle of Man (3 yrs 10 mos)\n\n  📍 IT Engineer (May 2021 - Jun 2022 · 1 yr 2 mos) | Douglas, Isle of Man\n  • Collaborated on internal projects to modernise business infrastructure, enhancing overall efficiency\n  • Implemented Azure cloud technologies, resulting in improved operational workflows\n  • Developed custom Helm charts for Kubernetes deployments, simplifying application configurations\n  • Created CI/CD pipelines that automated deployment processes, significantly increasing release frequency\n  Skills: Microsoft Azure, Azure DevOps, Helm, Kubernetes, CI/CD\n\n  📍 IT Apprentice (Sep 2018 - May 2021 · 2 yrs 9 mos) | Douglas, Isle of Man\n  • Provided live systems support across multiple teams, enhancing operational efficiency\n  • Collaborated with internal teams to improve player experience and streamline processes\n  • Developed internal tools and scripts, laying a strong foundation for operations\n  Skills: Technical Support, Customer Support, Scripting, Operations\n\nCore Skills: Azure, DevSecOps, Terraform, Kubernetes, Security Compliance, CI/CD, Infrastructure as Code, Observability, Team Leadership\n\nContact: \n  Email: joe@joecow.in\n  GitHub: https://github.com/joecow\n  LinkedIn: https://linkedin.com/in/joecowin\n`;
+    const cvContent = formatCV();
     await this.typeText(cvContent, 0);
   }
 
   private async showFiles() {
-    const files = `\ncv.txt\nREADME.md\nprojects/\n  ├── web-apps/\n  ├── automation/\n  └── cloud/\n`;
+    const files = formatFiles();
     await this.typeText(files, 0);
   }
 

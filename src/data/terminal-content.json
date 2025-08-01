@@ -1,0 +1,47 @@
+{
+  "welcome": {
+    "greeting": "Welcome to Joe Cowin's Terminal",
+    "instruction": "Type \"help\" for available commands"
+  },
+  "help": {
+    "title": "Available commands:",
+    "commands": [
+      {
+        "command": "help",
+        "description": "Show this help message"
+      },
+      {
+        "command": "cv",
+        "description": "Display my CV/resume"
+      },
+      {
+        "command": "cat cv.txt",
+        "description": "Display my CV/resume"
+      },
+      {
+        "command": "ls",
+        "description": "List files"
+      },
+      {
+        "command": "whoami",
+        "description": "Show current user"
+      },
+      {
+        "command": "date",
+        "description": "Show current date/time"
+      },
+      {
+        "command": "clear",
+        "description": "Clear terminal"
+      }
+    ]
+  },
+  "files": [
+    "cv.txt",
+    "README.md",
+    "projects/",
+    "  ├── web-apps/",
+    "  ├── automation/",
+    "  └── cloud/"
+  ]
+}

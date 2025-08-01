@@ -1,0 +1,89 @@
+{
+  "name": "Joe Cowin",
+  "title": "Information Security Engineer",
+  "about": "Passionate engineer with expertise in DevSecOps, cloud security, and infrastructure automation. Specializes in Azure technologies, security compliance, and building scalable cloud-native solutions.",
+  "experience": [
+    {
+      "company": "Derivco Málaga",
+      "location": "Málaga, Andalusia, Spain",
+      "duration": "Full-time · 3 yrs 2 mos",
+      "positions": [
+        {
+          "title": "Information Security Engineer",
+          "period": "Feb 2025 - Jul 2025 · 6 mos",
+          "achievements": [
+            "Administered and enhanced Azure policy management, transitioning to Azure EPAC for improved compliance",
+            "Implemented AzGovViz for governance visualisation, strengthening control coverage and best practices",
+            "Drove the adoption of Wiz, enabling teams to proactively identify security risks earlier in the software lifecycle"
+          ],
+          "skills": ["Azure Policy", "Azure EPAC", "Wiz", "Governance", "Compliance"]
+        },
+        {
+          "title": "Senior IT Engineer",
+          "period": "Feb 2024 - Jan 2025 · 1 yr",
+          "achievements": [
+            "Led DevSecOps initiatives, collaborating with cross-functional teams to launch an AI promotions tool on Azure Kubernetes Service",
+            "Engineered secure Azure environments using Terraform, enhancing deployment efficiency through robust CI/CD pipelines",
+            "Implemented CNCF best practices, resulting in accelerated delivery of scalable cloud-native solutions",
+            "Proactively managed post-launch operations, resolving critical production issues to ensure optimal performance"
+          ],
+          "skills": ["DevSecOps", "Azure Kubernetes Service (AKS)", "Terraform", "CI/CD", "CNCF"]
+        },
+        {
+          "title": "IT Engineer",
+          "period": "Jun 2022 - Feb 2024 · 1 yr 9 mos",
+          "achievements": [
+            "Seeded and trained a new technical team, enhancing operational capabilities",
+            "Automated cloud infrastructure deployments using Terraform, significantly improving scalability and maintainability",
+            "Proactively monitored and resolved production incidents, ensuring minimal business disruption and high system uptime"
+          ],
+          "skills": ["Terraform", "Observability", "Team Leadership", "Infrastructure Automation"]
+        }
+      ]
+    },
+    {
+      "company": "Derivco Isle of Man",
+      "location": "Douglas, Isle of Man",
+      "duration": "3 yrs 10 mos",
+      "positions": [
+        {
+          "title": "IT Engineer",
+          "period": "May 2021 - Jun 2022 · 1 yr 2 mos",
+          "achievements": [
+            "Collaborated on internal projects to modernise business infrastructure, enhancing overall efficiency",
+            "Implemented Azure cloud technologies, resulting in improved operational workflows",
+            "Developed custom Helm charts for Kubernetes deployments, simplifying application configurations",
+            "Created CI/CD pipelines that automated deployment processes, significantly increasing release frequency"
+          ],
+          "skills": ["Microsoft Azure", "Azure DevOps", "Helm", "Kubernetes", "CI/CD"]
+        },
+        {
+          "title": "IT Apprentice",
+          "period": "Sep 2018 - May 2021 · 2 yrs 9 mos",
+          "achievements": [
+            "Provided live systems support across multiple teams, enhancing operational efficiency",
+            "Collaborated with internal teams to improve player experience and streamline processes",
+            "Developed internal tools and scripts, laying a strong foundation for operations"
+          ],
+          "skills": ["Technical Support", "Customer Support", "Scripting", "Operations"]
+        }
+      ]
+    }
+  ],
+  "coreSkills": [
+    "Azure",
+    "DevSecOps",
+    "Terraform",
+    "Kubernetes",
+    "Security Compliance",
+    "CI/CD",
+    "Infrastructure as Code",
+    "Observability",
+    "Team Leadership"
+  ],
+  "contact": {
+    "email": "joe@joecow.in",
+    "github": "https://github.com/joecow",
+    "linkedin": "https://linkedin.com/in/joecowin"
+  }
+}
