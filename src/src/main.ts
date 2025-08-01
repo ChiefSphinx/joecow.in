@@ -379,10 +379,8 @@ class Terminal {
     snakeDiv.style.width = '100%';
     this.outputContainer.appendChild(snakeDiv);
     
-    // Create snake game with callback for when it ends
-    this.snakeInstance = new SnakeGame(snakeDiv, () => {
-      this.endSnakeGame();
-    });
+    // Create snake game
+    this.snakeInstance = new SnakeGame(snakeDiv);
   }
 
   private endSnakeGame() {
