@@ -56,10 +56,10 @@ export function getTerminalContent(): TerminalContent {
 export function formatCV(): string {
   const cv = getCVData();
   
-  let content = `\\nName: ${cv.name}\\n`;
-  content += `Title: ${cv.title}\\n`;
-  content += `About: ${cv.about}\\n\\n`;
-  content += `Experience:\\n\\n`;
+  let content = `\nName: ${cv.name}\n`;
+  content += `Title: ${cv.title}\n`;
+  content += `About: ${cv.about}\n\n`;
+  content += `Experience:\n\n`;
 
   cv.experience.forEach(exp => {
     content += `🏢 ${exp.company}`;
@@ -69,25 +69,25 @@ export function formatCV(): string {
     if (exp.location) {
       content += ` | ${exp.location}`;
     }
-    content += `\\n\\n`;
+    content += `\n\n`;
 
     exp.positions.forEach(position => {
-      content += `  📍 ${position.title} (${position.period})\\n`;
+      content += `  📍 ${position.title} (${position.period})\n`;
       position.achievements.forEach(achievement => {
-        content += `  • ${achievement}\\n`;
+        content += `  • ${achievement}\n`;
       });
       if (position.skills.length > 0) {
-        content += `  Skills: ${position.skills.join(', ')}\\n`;
+        content += `  Skills: ${position.skills.join(', ')}\n`;
       }
-      content += `\\n`;
+      content += `\n`;
     });
   });
 
-  content += `Core Skills: ${cv.coreSkills.join(', ')}\\n\\n`;
-  content += `Contact: \\n`;
-  content += `  Email: ${cv.contact.email}\\n`;
-  content += `  GitHub: ${cv.contact.github}\\n`;
-  content += `  LinkedIn: ${cv.contact.linkedin}\\n`;
+  content += `Core Skills: ${cv.coreSkills.join(', ')}\n\n`;
+  content += `Contact: \n`;
+  content += `  Email: ${cv.contact.email}\n`;
+  content += `  GitHub: ${cv.contact.github}\n`;
+  content += `  LinkedIn: ${cv.contact.linkedin}\n`;
 
   return content;
 }
@@ -95,10 +95,10 @@ export function formatCV(): string {
 export function formatHelp(): string {
   const terminal = getTerminalContent();
   
-  let content = `\\n${terminal.help.title}\\n`;
+  let content = `\n${terminal.help.title}\n`;
   terminal.help.commands.forEach(cmd => {
     const padding = ' '.repeat(Math.max(2, 14 - cmd.command.length));
-    content += `  ${cmd.command}${padding}- ${cmd.description}\\n`;
+    content += `  ${cmd.command}${padding}- ${cmd.description}\n`;
   });
   
   return content;
@@ -106,7 +106,7 @@ export function formatHelp(): string {
 
 export function formatFiles(): string {
   const terminal = getTerminalContent();
-  return `\\n${terminal.files.join('\\n')}\\n`;
+  return `\n${terminal.files.join('\n')}\n`;
 }
 
 export function getWelcomeMessages(): { greeting: string; instruction: string } {
