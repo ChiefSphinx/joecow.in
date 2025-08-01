@@ -186,6 +186,9 @@ class Terminal {
     // Show and enable the input line
     this.inputLine.style.visibility = 'visible';
     this.inputLine.style.pointerEvents = 'auto';
+    
+    // Ensure the prompt is visible after showing it
+    this.scrollToBottom();
   }
 
   private setupEventListeners() {
@@ -320,7 +323,22 @@ class Terminal {
   }
 
   private scrollToBottom() {
-    this.container.scrollTop = this.container.scrollHeight;
+    // Use requestAnimationFrame to ensure DOM updates are processed first
+    requestAnimationFrame(() => {
+      // Scroll the terminal body to show the latest content
+      const terminalBody = document.querySelector('.terminal-body') as HTMLDivElement;
+      if (terminalBody) {
+        terminalBody.scrollTop = terminalBody.scrollHeight;
+      }
+      
+      // Also scroll the container as fallback
+      this.container.scrollTop = this.container.scrollHeight;
+      
+      // Ensure the input line is visible using scrollIntoView
+      if (this.inputLine && this.inputLine.isConnected) {
+        this.inputLine.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+    });
   }
 
   private sleep(ms: number): Promise<void> {
