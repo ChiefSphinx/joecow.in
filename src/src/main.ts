@@ -11,6 +11,7 @@ class Terminal {
   private isTyping = false;
   private snakeInstance: SnakeGame | null = null;
   private inputLine!: HTMLDivElement;
+  private isSnakeActive = false;
 
   constructor() {
     this.container = document.querySelector<HTMLDivElement>('#app')!;
@@ -193,7 +194,24 @@ class Terminal {
 
   private setupEventListeners() {
     document.addEventListener('keydown', (e) => {
+      // If snake is active, prevent all CLI input and arrow key scrolling
+      if (this.isSnakeActive) {
+        // Prevent arrow keys from scrolling the page/terminal
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+          e.preventDefault();
+        }
+        // Allow snake game to handle its own input
+        return;
+      }
+      
       if (this.isTyping) return;
+      
+      // Prevent arrow keys from scrolling when not in snake mode
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        return;
+      }
+      
       // Get the text node before the cursor
       let textNode = this.commandLine.firstChild;
       if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
@@ -246,24 +264,9 @@ class Terminal {
         await this.typeText(new Date().toLocaleString() + '\n', 0);
         break;
       case 'snake':
-        // Destroy previous SnakeGame if it exists
-        if (this.snakeInstance) {
-          this.snakeInstance.destroy();
-          this.snakeInstance = null;
-        }
-        // Remove any previous snake containers from output
-        Array.from(this.outputContainer.querySelectorAll('.snake-terminal-container')).forEach(el => el.remove());
-        // Render Snake game in terminal output
-        const snakeDiv = document.createElement('div');
-        snakeDiv.className = 'snake-terminal-container';
-        snakeDiv.style.display = 'flex';
-        snakeDiv.style.justifyContent = 'center';
-        snakeDiv.style.alignItems = 'center';
-        snakeDiv.style.height = '100%';
-        snakeDiv.style.width = '100%';
-        this.outputContainer.appendChild(snakeDiv);
-        this.snakeInstance = new SnakeGame(snakeDiv);
-        break;
+        await this.startSnakeGame();
+        // Don't show prompt after snake - it will be handled when the game ends
+        return;
       case '':
         break;
       default:
@@ -343,6 +346,63 @@ class Terminal {
 
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async startSnakeGame() {
+    // Destroy previous SnakeGame if it exists
+    if (this.snakeInstance) {
+      this.snakeInstance.destroy();
+      this.snakeInstance = null;
+    }
+    
+    // Remove any previous snake containers from output
+    Array.from(this.outputContainer.querySelectorAll('.snake-terminal-container')).forEach(el => el.remove());
+    
+    // Set snake active state
+    this.isSnakeActive = true;
+    
+    // Hide the input line while snake is active
+    this.inputLine.style.visibility = 'hidden';
+    this.inputLine.style.pointerEvents = 'none';
+    this.cursor.style.display = 'none';
+    
+    // Add instructions
+    await this.typeText('\nStarting Snake Game...\nUse arrow keys to control the snake. Press ESC to exit.\n\n', 0);
+    
+    // Render Snake game in terminal output
+    const snakeDiv = document.createElement('div');
+    snakeDiv.className = 'snake-terminal-container';
+    snakeDiv.style.display = 'flex';
+    snakeDiv.style.justifyContent = 'center';
+    snakeDiv.style.alignItems = 'center';
+    snakeDiv.style.height = '100%';
+    snakeDiv.style.width = '100%';
+    this.outputContainer.appendChild(snakeDiv);
+    
+    // Create snake game with callback for when it ends
+    this.snakeInstance = new SnakeGame(snakeDiv, () => {
+      this.endSnakeGame();
+    });
+  }
+
+  private endSnakeGame() {
+    // Clean up snake game
+    if (this.snakeInstance) {
+      this.snakeInstance.destroy();
+      this.snakeInstance = null;
+    }
+    
+    // Remove snake containers
+    Array.from(this.outputContainer.querySelectorAll('.snake-terminal-container')).forEach(el => el.remove());
+    
+    // Reset snake state
+    this.isSnakeActive = false;
+    
+    // Add game over message
+    this.addToOutput('\nGame Over! Returning to terminal...\n');
+    
+    // Show the input line again
+    this.showPrompt();
   }
 }
 
