@@ -383,25 +383,6 @@ class Terminal {
     this.snakeInstance = new SnakeGame(snakeDiv);
   }
 
-  private endSnakeGame() {
-    // Clean up snake game
-    if (this.snakeInstance) {
-      this.snakeInstance.destroy();
-      this.snakeInstance = null;
-    }
-    
-    // Remove snake containers
-    Array.from(this.outputContainer.querySelectorAll('.snake-terminal-container')).forEach(el => el.remove());
-    
-    // Reset snake state
-    this.isSnakeActive = false;
-    
-    // Add game over message
-    this.addToOutput('\nGame Over! Returning to terminal...\n');
-    
-    // Show the input line again
-    this.showPrompt();
-  }
 }
 
 // Initialize PostHog
