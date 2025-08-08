@@ -5,8 +5,6 @@ import { SnakeGame } from '../src/snake'
 
 describe('SnakeGame', () => {
   it('pressing Escape exits the game and calls onExit', () => {
-    vi.useFakeTimers()
-
     // Arrange DOM container
     const container = document.createElement('div')
     container.style.width = '400px'
@@ -17,18 +15,16 @@ describe('SnakeGame', () => {
     // Start without loop and disable drawing to avoid timers and canvas work
     const game = new SnakeGame(container, onExit, { startLoop: false, disableDraw: true })
 
-    // Act: press Escape
-    const event = new KeyboardEvent('keydown', { key: 'Escape' })
-    window.dispatchEvent(event)
+    try {
+      // Act: press Escape
+      const event = new KeyboardEvent('keydown', { key: 'Escape' })
+      window.dispatchEvent(event)
 
-    // No timers should be pending, but flush just in case
-    try { vi.runOnlyPendingTimers() } catch {}
-
-    // Assert: onExit called
-    expect(onExit).toHaveBeenCalled()
-
-    // Cleanup
-    game.destroy()
-    vi.useRealTimers()
+      // Assert: onExit called
+      expect(onExit).toHaveBeenCalled()
+    } finally {
+      // Cleanup to avoid any open handles
+      game.destroy()
+    }
   })
 })
