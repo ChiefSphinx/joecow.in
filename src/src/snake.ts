@@ -65,8 +65,9 @@ export class SnakeGame {
     this.height = this.container.clientHeight;
     this.canvas.width = this.width;
     this.canvas.height = this.height;
-    this.cols = Math.floor(this.width / this.gridSize);
-    this.rows = Math.floor(this.height / this.gridSize);
+    // In test/jsdom environments clientWidth/height can be 0; ensure minimum grid of 1x1
+    this.cols = Math.max(1, Math.floor(this.width / this.gridSize));
+    this.rows = Math.max(1, Math.floor(this.height / this.gridSize));
     // Clamp snake and food positions if needed
     if (this.snake) {
       this.snake = this.snake.filter(s => s.x < this.cols && s.y < this.rows);
@@ -78,14 +79,15 @@ export class SnakeGame {
   }
 
   private reset() {
-    this.cols = Math.floor(this.container.clientWidth / this.gridSize);
-    this.rows = Math.floor(this.container.clientHeight / this.gridSize);
+    // Guard against environments where client sizes are 0 (e.g., jsdom)
+    this.cols = Math.max(1, Math.floor(this.container.clientWidth / this.gridSize));
+    this.rows = Math.max(1, Math.floor(this.container.clientHeight / this.gridSize));
     const startX = Math.floor(this.cols / 2);
     const startY = Math.floor(this.rows / 2);
     this.snake = [
       { x: startX, y: startY },
-      { x: startX - 1, y: startY },
-      { x: startX - 2, y: startY },
+      { x: Math.max(0, startX - 1), y: startY },
+      { x: Math.max(0, startX - 2), y: startY },
     ];
     this.direction = { x: 1, y: 0 };
     this.pendingDirection = null;
@@ -190,12 +192,19 @@ export class SnakeGame {
   }
 
   private placeFood() {
+    // If grid is degenerate, just place at origin to avoid infinite loops
+    if (this.cols <= 0 || this.rows <= 0) {
+      this.food = { x: 0, y: 0 };
+      return;
+    }
     let valid = false;
-    while (!valid) {
+    let safety = 0;
+    while (!valid && safety++ < 1000) {
       this.food.x = Math.floor(Math.random() * this.cols);
       this.food.y = Math.floor(Math.random() * this.rows);
       valid = !this.snake.some((s) => s.x === this.food.x && s.y === this.food.y);
     }
+    if (!valid) this.food = { x: 0, y: 0 };
   }
 
   private draw() {
