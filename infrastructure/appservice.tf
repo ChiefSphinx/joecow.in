@@ -18,10 +18,13 @@ resource "azurerm_linux_web_app" "main" {
     application_stack {
       docker_image_name = "chiefsphinx/joecow.in:latest"
     }
-    always_on = false
-    ftps_state = "Disabled"
-    http2_enabled = true
+    always_on           = false
+    ftps_state          = "Disabled"
+    http2_enabled       = true
     minimum_tls_version = "1.2"
+    health_check_path   = "/healthz"
+    detailed_error_logging_enabled = true
+    http_logging_enabled          = true
   }
 
   app_settings = {

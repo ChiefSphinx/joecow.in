@@ -6,11 +6,20 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:ui": "vitest",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.45.0",
+    "@testing-library/dom": "^10.4.0",
+    "@types/node": "^20.14.10",
     "typescript": "~5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^1.6.0",
+    "jsdom": "^24.1.0"
   },
   "dependencies": {
     "posthog-js": "^1.255.1"

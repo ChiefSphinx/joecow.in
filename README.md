@@ -19,21 +19,30 @@ This repository contains the source code for my personal website, featuring a un
 ```
 ├── .github/
 │   ├── workflows/ # GitHub Actions workflows
-│   │   ├── app-deploy.yml
-│   │   └── infra-deploy.yml
+│   │   └── docker-publish.yml
 │   └── pull_request_template.md
 ├── infrastructure/ # Terraform templates
 │   ├── main.tf
 │   ├── resourcegroup.tf
+│   ├── appservice.tf
 │   ├── variables.tf
 │   ├── .gitignore
 │   └── README.md
-├── src/ # Main application code
+├── src/ # Vite application (Node.js)
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.json
 │   ├── public/
-│   ├── main.js (or main.tsx)
-│   ├── App.jsx (or App.tsx)
-│   ├── favicon.ico
-│   └── node_modules/
+│   │   └── favicon.ico
+│   ├── src/
+│   │   ├── main.ts
+│   │   ├── posthog.ts
+│   │   ├── snake.ts
+│   │   ├── style.css
+│   │   └── vite-env.d.ts
+│   └── utils/
+│       └── content-loader.ts
+├── nginx.conf
 ├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yml
@@ -68,15 +77,20 @@ The application will be available at `http://localhost:6969`
 
 ## Infrastructure Deployment
 
-The website is deployed to Azure using Terraform and GitHub Actions. The deployment workflow is triggered automatically when changes are pushed to the `main` branch in the `infrastructure/` directory.
+The production site runs on Azure App Service (Linux). Container images are built and pushed via the GitHub Actions workflow at `.github/workflows/docker-publish.yml` whenever changes land on `main` (paths: `src/**`, `Dockerfile`, `docker-compose.yml`, or the workflow).
 
-Prerequisites for deployment:
-- Azure subscription
-- Service Principal with appropriate permissions
-- GitHub repository secrets configured:
-  - AZURE_CLIENT_ID
-  - AZURE_TENANT_ID
-  - AZURE_SUBSCRIPTION_ID
+That workflow:
+- Builds the Docker image for the Vite app and pushes tags `latest` and a short commit SHA to Docker Hub
+- Deploys the newly built image to the Azure Web App using a publish profile secret
+
+Required GitHub secrets for the workflow:
+- DOCKERHUB_USERNAME
+- DOCKERHUB_TOKEN
+- VITE_POSTHOG_KEY
+- VITE_POSTHOG_HOST
+- AZURE_WEBAPP_PUBLISH_PROFILE
+
+Terraform in `infrastructure/` provisions the Azure resources (resource group, app service plan, Linux web app). Terraform is not currently executed automatically in CI—run it manually as needed (see below).
 
 ### Manual Terraform Usage
 

@@ -1,3 +1,9 @@
+export type SnakeOptions = {
+  startLoop?: boolean;
+  tickMs?: number;
+  disableDraw?: boolean;
+};
+
 export class SnakeGame {
   private container: HTMLElement;
   private canvas: HTMLCanvasElement;
@@ -16,9 +22,16 @@ export class SnakeGame {
   private score = 0;
   private resizeObserver: ResizeObserver;
   private destroyed = false;
+  private onExit?: () => void;
+  private tickMs: number = 100;
+  private disableDraw: boolean = false;
 
-  constructor(container: HTMLElement) {
+  constructor(container: HTMLElement, onExit?: () => void, options?: SnakeOptions) {
     this.container = container;
+    this.onExit = onExit;
+    if (options?.tickMs !== undefined) this.tickMs = options.tickMs;
+    if (options?.disableDraw !== undefined) this.disableDraw = options.disableDraw;
+
     this.canvas = document.createElement('canvas');
     this.canvas.style.background = '#111';
     this.canvas.style.display = 'block';
@@ -31,7 +44,9 @@ export class SnakeGame {
     this.handleResize();
     this.listen();
     this.reset();
-    this.loop();
+    if (options?.startLoop !== false) {
+      this.loop();
+    }
   }
 
   public destroy() {
@@ -39,6 +54,9 @@ export class SnakeGame {
     this.unlisten();
     if (this.gameInterval) clearTimeout(this.gameInterval);
     if (this.resizeObserver) this.resizeObserver.disconnect();
+    if (this.onExit) {
+      try { this.onExit(); } catch {}
+    }
   }
 
   private handleResize() {
@@ -83,8 +101,15 @@ export class SnakeGame {
   private unlisten() {
     window.removeEventListener('keydown', this.handleKey);
   }
-
   private handleKey = (e: KeyboardEvent) => {
+    // ESC exits the game immediately
+    if (e.key === 'Escape') {
+      this.isGameOver = true;
+      this.unlisten();
+      this.destroy();
+      return;
+    }
+
     let newDir: { x: number; y: number } | null = null;
     switch (e.key) {
       case 'ArrowUp':
@@ -126,7 +151,7 @@ export class SnakeGame {
     }
     this.update();
     this.draw();
-    this.gameInterval = setTimeout(this.loop, 100);
+    this.gameInterval = setTimeout(this.loop, this.tickMs);
   };
 
   private update() {
@@ -174,6 +199,7 @@ export class SnakeGame {
   }
 
   private draw() {
+    if (this.disableDraw) return;
     this.ctx.clearRect(0, 0, this.width, this.height);
     // Draw snake
     for (let i = 0; i < this.snake.length; i++) {
