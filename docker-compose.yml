@@ -4,6 +4,6 @@ services:
   joecow-in:
     build: .
     ports:
-      - "3000:80"
+      - "6969:80"
     restart: unless-stopped
     container_name: joecow-in-app

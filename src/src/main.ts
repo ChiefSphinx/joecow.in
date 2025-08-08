@@ -12,6 +12,7 @@ class Terminal {
   private snakeInstance: SnakeGame | null = null;
   private inputLine!: HTMLDivElement;
   private isSnakeActive = false;
+  private keydownHandler!: (e: KeyboardEvent) => void;
 
   constructor() {
     this.container = document.querySelector<HTMLDivElement>('#app')!;
@@ -193,7 +194,12 @@ class Terminal {
   }
 
   private setupEventListeners() {
-    document.addEventListener('keydown', (e) => {
+    // Remove existing handler to avoid duplicating listeners on restart
+    if (this.keydownHandler) {
+      document.removeEventListener('keydown', this.keydownHandler);
+    }
+
+    this.keydownHandler = (e: KeyboardEvent) => {
       // If snake is active, prevent all CLI input and arrow key scrolling
       if (this.isSnakeActive) {
         // Prevent arrow keys from scrolling the page/terminal
@@ -203,22 +209,22 @@ class Terminal {
         // Allow snake game to handle its own input
         return;
       }
-      
+
       if (this.isTyping) return;
-      
+
       // Prevent arrow keys from scrolling when not in snake mode
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault();
         return;
       }
-      
+
       // Get the text node before the cursor
       let textNode = this.commandLine.firstChild;
       if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
         textNode = document.createTextNode('');
         this.commandLine.insertBefore(textNode, this.cursor);
       }
-      let text = textNode.textContent || '';
+      const text = textNode.textContent || '';
       if (e.key === 'Enter') {
         this.executeCommand(text);
       } else if (e.key === 'Backspace') {
@@ -226,7 +232,9 @@ class Terminal {
       } else if (e.key.length === 1) {
         textNode.textContent = text + e.key;
       }
-    });
+    };
+
+    document.addEventListener('keydown', this.keydownHandler);
   }
 
   private async executeCommand(command: string) {
@@ -379,8 +387,16 @@ class Terminal {
     snakeDiv.style.width = '100%';
     this.outputContainer.appendChild(snakeDiv);
     
-    // Create snake game
-    this.snakeInstance = new SnakeGame(snakeDiv);
+    // Create snake game with exit callback
+    this.snakeInstance = new SnakeGame(snakeDiv, () => {
+      // Cleanup when snake exits
+      this.isSnakeActive = false;
+      // Remove snake container if it exists
+      const container = this.outputContainer.querySelector('.snake-terminal-container');
+      if (container) container.remove();
+      // Restore prompt for further input
+      this.showPrompt();
+    });
   }
 
 }
