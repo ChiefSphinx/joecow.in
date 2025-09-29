@@ -13,6 +13,9 @@ RUN npm ci
 # Copy the rest of your source code from the 'src' directory
 COPY src/ ./
 
+# Ensure README is available during build if referenced at runtime
+COPY README.md ./
+
 # --- CHANGES START HERE ---
 
 # Declare build arguments that will be passed from the CI/CD pipeline.
@@ -37,6 +40,9 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Serve README from web root for terminal fetch
+COPY README.md /usr/share/nginx/html/README.md
 
 # Expose port 80
 EXPOSE 80
