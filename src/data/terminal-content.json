@@ -23,6 +23,10 @@
         "description": "Display repository README"
       },
       {
+        "command": "snake",
+        "description": "🐍"
+      },
+      {
         "command": "ls",
         "description": "List files"
       },
