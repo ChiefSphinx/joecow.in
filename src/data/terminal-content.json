@@ -19,6 +19,14 @@
         "description": "Display my CV/resume"
       },
       {
+        "command": "cat README.md",
+        "description": "Display repository README"
+      },
+      {
+        "command": "cat README.md",
+        "description": "Display my CV/resume"
+      },
+      {
         "command": "ls",
         "description": "List files"
       },
@@ -38,10 +46,6 @@
   },
   "files": [
     "cv.txt",
-    "README.md",
-    "projects/",
-    "  ├── web-apps/",
-    "  ├── automation/",
-    "  └── cloud/"
+    "README.md"
   ]
 }
