@@ -2,6 +2,7 @@ import './style.css'
 import { initPostHog, trackCommandUsage, trackButtonClick, trackTerminalSession, trackPageView } from './posthog'
 import { SnakeGame } from './snake'
 import { formatCV, formatHelp, formatFiles, getWelcomeMessages } from '../utils/content-loader'
+import readmeContent from '../../README.md?raw'
 
 class Terminal {
   private container: HTMLDivElement;
@@ -259,6 +260,9 @@ class Terminal {
       case 'cat cv.txt':
         await this.showCV();
         break;
+      case 'cat readme.md':
+        await this.showReadme();
+        break;
       case 'clear':
         this.clearOutput();
         break;
@@ -293,6 +297,10 @@ class Terminal {
   private async showCV() {
     const cvContent = formatCV();
     await this.typeText(cvContent, 0);
+  }
+
+  private async showReadme() {
+    await this.typeText(`\n${readmeContent}\n`, 0);
   }
 
   private async showFiles() {
