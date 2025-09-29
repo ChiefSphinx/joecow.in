@@ -23,10 +23,6 @@
         "description": "Display repository README"
       },
       {
-        "command": "cat README.md",
-        "description": "Display my CV/resume"
-      },
-      {
         "command": "ls",
         "description": "List files"
       },
