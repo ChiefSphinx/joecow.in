@@ -19,10 +19,6 @@
         "description": "Display my CV/resume"
       },
       {
-        "command": "cat README.md",
-        "description": "Display repository README"
-      },
-      {
         "command": "snake",
         "description": "🐍"
       },
