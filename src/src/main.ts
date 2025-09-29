@@ -2,7 +2,6 @@ import './style.css'
 import { initPostHog, trackCommandUsage, trackButtonClick, trackTerminalSession, trackPageView } from './posthog'
 import { SnakeGame } from './snake'
 import { formatCV, formatHelp, formatFiles, getWelcomeMessages } from '../utils/content-loader'
-import readmeContent from '../../README.md?raw'
 
 class Terminal {
   private container: HTMLDivElement;
@@ -300,7 +299,14 @@ class Terminal {
   }
 
   private async showReadme() {
-    await this.typeText(`\n${readmeContent}\n`, 0);
+    try {
+      const res = await fetch('/README.md', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('Failed to load README');
+      const text = await res.text();
+      await this.typeText(`\n${text}\n`, 0);
+    } catch (err) {
+      await this.typeText(`\nError: Unable to load README.md\n`, 0);
+    }
   }
 
   private async showFiles() {
