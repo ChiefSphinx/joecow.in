@@ -431,6 +431,11 @@ class Terminal {
     this.inputLine.style.pointerEvents = 'none';
     this.cursor.style.display = 'none';
 
+    // Hide mobile keyboard by blurring the input
+    if (this.mobileInput) {
+      this.mobileInput.blur();
+    }
+
     // Add instructions (different for mobile)
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const instructions = isMobile

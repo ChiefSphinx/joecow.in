@@ -18,6 +18,7 @@ export class SnakeGame {
   private food: { x: number; y: number } = { x: 0, y: 0 };
   private gameInterval: any;
   private isGameOver = false;
+  private isWaitingToStart = true;
   private pendingDirection: { x: number; y: number } | null = null;
   private score = 0;
   private resizeObserver: ResizeObserver;
@@ -44,8 +45,13 @@ export class SnakeGame {
     this.handleResize();
     this.listen();
     this.reset();
+
+    // Draw initial start screen
+    this.drawStartScreen();
+
     if (options?.startLoop !== false) {
-      this.loop();
+      // Don't auto-start the game loop, wait for user input
+      // The loop will be started when user presses a key
     }
   }
 
@@ -75,6 +81,10 @@ export class SnakeGame {
     }
     if (this.food) {
       if (this.food.x >= this.cols || this.food.y >= this.rows) this.placeFood();
+    }
+    // Redraw start screen if waiting
+    if (this.isWaitingToStart) {
+      this.drawStartScreen();
     }
   }
 
@@ -109,6 +119,26 @@ export class SnakeGame {
       this.isGameOver = true;
       this.unlisten();
       this.destroy();
+      return;
+    }
+
+    // If waiting to start, any valid game key starts the game
+    if (this.isWaitingToStart) {
+      const validStartKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', ' ', 'Enter'];
+      if (validStartKeys.includes(e.key)) {
+        this.startGame();
+        // If it's a direction key, also set the initial direction
+        if (['ArrowUp', 'w'].includes(e.key)) {
+          this.direction = { x: 0, y: -1 };
+        } else if (['ArrowDown', 's'].includes(e.key)) {
+          this.direction = { x: 0, y: 1 };
+        } else if (['ArrowLeft', 'a'].includes(e.key)) {
+          this.direction = { x: -1, y: 0 };
+        } else if (['ArrowRight', 'd'].includes(e.key)) {
+          this.direction = { x: 1, y: 0 };
+        }
+        return;
+      }
       return;
     }
 
@@ -243,5 +273,43 @@ export class SnakeGame {
     this.ctx.font = '18px Fira Mono, monospace';
     this.ctx.fillStyle = '#fff';
     this.ctx.textAlign = 'start';
+  }
+
+  private drawStartScreen() {
+    if (this.disableDraw) return;
+    this.ctx.clearRect(0, 0, this.width, this.height);
+
+    // Draw the snake and food in their starting positions
+    this.draw();
+
+    // Draw semi-transparent overlay
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    // Draw title
+    this.ctx.fillStyle = '#0f0';
+    this.ctx.font = 'bold 32px Fira Mono, monospace';
+    this.ctx.textAlign = 'center';
+    this.ctx.fillText('SNAKE', this.width / 2, this.height / 2 - 40);
+
+    // Draw start instruction
+    this.ctx.fillStyle = '#fff';
+    this.ctx.font = '18px Fira Mono, monospace';
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const startText = isMobile ? 'Tap a direction to start' : 'Press any arrow key to start';
+    this.ctx.fillText(startText, this.width / 2, this.height / 2 + 10);
+
+    // Draw controls hint
+    this.ctx.fillStyle = '#888';
+    this.ctx.font = '14px Fira Mono, monospace';
+    const controlsText = isMobile ? 'Use D-pad to control' : 'Arrow keys or WASD to move';
+    this.ctx.fillText(controlsText, this.width / 2, this.height / 2 + 40);
+
+    this.ctx.textAlign = 'start';
+  }
+
+  private startGame() {
+    this.isWaitingToStart = false;
+    this.loop();
   }
 } 
