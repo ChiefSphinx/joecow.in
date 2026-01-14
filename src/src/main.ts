@@ -13,6 +13,8 @@ class Terminal {
   private inputLine!: HTMLDivElement;
   private isSnakeActive = false;
   private keydownHandler!: (e: KeyboardEvent) => void;
+  private mobileInput!: HTMLInputElement;
+  private snakeMobileControls: HTMLDivElement | null = null;
 
   constructor() {
     this.container = document.querySelector<HTMLDivElement>('#app')!;
@@ -24,9 +26,9 @@ class Terminal {
       <div class="terminal-window">
         <div class="terminal-header">
           <div class="terminal-buttons">
-            <span class="terminal-button close" id="close-btn"></span>
-            <span class="terminal-button minimize" id="minimize-btn"></span>
-            <span class="terminal-button maximize" id="maximize-btn"></span>
+            <span class="terminal-button close" id="close-btn" role="button" aria-label="Close terminal"></span>
+            <span class="terminal-button minimize" id="minimize-btn" role="button" aria-label="Minimize terminal"></span>
+            <span class="terminal-button maximize" id="maximize-btn" role="button" aria-label="Maximize terminal"></span>
           </div>
           <div class="terminal-title">joe@joecow.in: ~/terminal</div>
         </div>
@@ -36,6 +38,7 @@ class Terminal {
             <span class="prompt">joe@joecow.in:~$ </span>
             <span class="command-line" id="command-line"><span class="cursor" id="cursor">█</span></span>
           </div>
+          <input type="text" class="mobile-input" id="mobile-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Terminal input" />
         </div>
       </div>
     `;
@@ -44,8 +47,10 @@ class Terminal {
     this.commandLine = document.querySelector<HTMLDivElement>('#command-line')!;
     this.cursor = document.querySelector<HTMLSpanElement>('#cursor')!;
     this.inputLine = document.querySelector<HTMLDivElement>('#terminal-input-line')!;
+    this.mobileInput = document.querySelector<HTMLInputElement>('#mobile-input')!;
 
     this.setupButtonListeners();
+    this.setupMobileInput();
     this.startTerminal();
   }
 
@@ -65,6 +70,39 @@ class Terminal {
     maximizeBtn.addEventListener('click', () => {
       trackButtonClick('maximize');
       this.maximizeTerminal();
+    });
+  }
+
+  private setupMobileInput() {
+    // Focus the hidden input when tapping the terminal body
+    const terminalBody = document.querySelector('.terminal-body') as HTMLDivElement;
+    terminalBody.addEventListener('click', () => {
+      if (!this.isSnakeActive && !this.isTyping) {
+        this.mobileInput.focus();
+      }
+    });
+
+    // Handle input from the mobile keyboard
+    this.mobileInput.addEventListener('input', () => {
+      if (this.isSnakeActive || this.isTyping) return;
+
+      // Get the text node before the cursor
+      let textNode = this.commandLine.firstChild;
+      if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
+        textNode = document.createTextNode('');
+        this.commandLine.insertBefore(textNode, this.cursor);
+      }
+      textNode.textContent = this.mobileInput.value;
+    });
+
+    // Handle Enter key from mobile keyboard
+    this.mobileInput.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && !this.isSnakeActive && !this.isTyping) {
+        e.preventDefault();
+        const command = this.mobileInput.value;
+        this.mobileInput.value = '';
+        this.executeCommand(command);
+      }
     });
   }
 
@@ -188,7 +226,12 @@ class Terminal {
     // Show and enable the input line
     this.inputLine.style.visibility = 'visible';
     this.inputLine.style.pointerEvents = 'auto';
-    
+
+    // Clear mobile input
+    if (this.mobileInput) {
+      this.mobileInput.value = '';
+    }
+
     // Ensure the prompt is visible after showing it
     this.scrollToBottom();
   }
@@ -376,21 +419,25 @@ class Terminal {
       this.snakeInstance.destroy();
       this.snakeInstance = null;
     }
-    
+
     // Remove any previous snake containers from output
     Array.from(this.outputContainer.querySelectorAll('.snake-terminal-container')).forEach(el => el.remove());
-    
+
     // Set snake active state
     this.isSnakeActive = true;
-    
+
     // Hide the input line while snake is active
     this.inputLine.style.visibility = 'hidden';
     this.inputLine.style.pointerEvents = 'none';
     this.cursor.style.display = 'none';
-    
-    // Add instructions
-    await this.typeText('\nStarting Snake Game...\nUse arrow keys to control the snake. Press ESC to exit.\n\n', 0);
-    
+
+    // Add instructions (different for mobile)
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const instructions = isMobile
+      ? '\nStarting Snake Game...\nUse the on-screen controls to play. Tap EXIT to quit.\n\n'
+      : '\nStarting Snake Game...\nUse arrow keys to control the snake. Press ESC to exit.\n\n';
+    await this.typeText(instructions, 0);
+
     // Render Snake game in terminal output
     const snakeDiv = document.createElement('div');
     snakeDiv.className = 'snake-terminal-container';
@@ -404,6 +451,9 @@ class Terminal {
     // Scroll to ensure the snake game is visible
     this.scrollToBottom();
 
+    // Create mobile controls
+    this.createSnakeMobileControls();
+
     // Create snake game with exit callback
     this.snakeInstance = new SnakeGame(snakeDiv, () => {
       // Cleanup when snake exits
@@ -411,9 +461,49 @@ class Terminal {
       // Remove snake container if it exists
       const container = this.outputContainer.querySelector('.snake-terminal-container');
       if (container) container.remove();
+      // Remove mobile controls
+      this.removeSnakeMobileControls();
       // Restore prompt for further input
       this.showPrompt();
     });
+  }
+
+  private createSnakeMobileControls() {
+    // Remove existing controls if any
+    this.removeSnakeMobileControls();
+
+    this.snakeMobileControls = document.createElement('div');
+    this.snakeMobileControls.className = 'snake-mobile-controls';
+    this.snakeMobileControls.innerHTML = `
+      <div class="snake-dpad">
+        <button class="snake-dpad-btn up" aria-label="Move up">▲</button>
+        <button class="snake-dpad-btn left" aria-label="Move left">◀</button>
+        <div class="snake-dpad-center"></div>
+        <button class="snake-dpad-btn right" aria-label="Move right">▶</button>
+        <button class="snake-dpad-btn down" aria-label="Move down">▼</button>
+      </div>
+      <button class="snake-exit-btn" aria-label="Exit game">EXIT</button>
+    `;
+
+    document.body.appendChild(this.snakeMobileControls);
+
+    // Add event listeners for touch controls
+    const simulateKey = (key: string) => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key }));
+    };
+
+    this.snakeMobileControls.querySelector('.up')?.addEventListener('click', () => simulateKey('ArrowUp'));
+    this.snakeMobileControls.querySelector('.down')?.addEventListener('click', () => simulateKey('ArrowDown'));
+    this.snakeMobileControls.querySelector('.left')?.addEventListener('click', () => simulateKey('ArrowLeft'));
+    this.snakeMobileControls.querySelector('.right')?.addEventListener('click', () => simulateKey('ArrowRight'));
+    this.snakeMobileControls.querySelector('.snake-exit-btn')?.addEventListener('click', () => simulateKey('Escape'));
+  }
+
+  private removeSnakeMobileControls() {
+    if (this.snakeMobileControls) {
+      this.snakeMobileControls.remove();
+      this.snakeMobileControls = null;
+    }
   }
 
 }

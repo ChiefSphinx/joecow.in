@@ -369,3 +369,233 @@ a:hover {
   justify-content: center;
   font-size: 1.2em;
 }
+
+/* Mobile Input - Hidden text input for keyboard support */
+.mobile-input {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* Snake Mobile Controls */
+.snake-mobile-controls {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.snake-dpad {
+  display: grid;
+  grid-template-columns: 60px 60px 60px;
+  grid-template-rows: 60px 60px 60px;
+  gap: 4px;
+}
+
+.snake-dpad-btn {
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 255, 0, 0.3);
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  color: #00ff00;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.snake-dpad-btn:active {
+  background: rgba(0, 255, 0, 0.6);
+}
+
+.snake-dpad-btn.up { grid-column: 2; grid-row: 1; }
+.snake-dpad-btn.left { grid-column: 1; grid-row: 2; }
+.snake-dpad-btn.right { grid-column: 3; grid-row: 2; }
+.snake-dpad-btn.down { grid-column: 2; grid-row: 3; }
+
+.snake-dpad-center {
+  grid-column: 2;
+  grid-row: 2;
+  width: 60px;
+  height: 60px;
+}
+
+.snake-exit-btn {
+  display: block;
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px 24px;
+  background: rgba(255, 0, 0, 0.3);
+  border: 2px solid #ff0000;
+  border-radius: 8px;
+  color: #ff0000;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.snake-exit-btn:active {
+  background: rgba(255, 0, 0, 0.6);
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  /* Larger tap targets for terminal buttons */
+  .terminal-button {
+    width: 28px;
+    height: 28px;
+    /* Invisible touch target expansion */
+    position: relative;
+  }
+
+  .terminal-button::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+
+  .terminal-buttons {
+    gap: 16px;
+  }
+
+  .terminal-header {
+    padding: 12px 16px;
+  }
+
+  /* Hide terminal title on very small screens */
+  .terminal-title {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 50%;
+  }
+
+  /* Adjust terminal body padding */
+  .terminal-body {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* Make prompt shorter on mobile */
+  .prompt {
+    font-size: 14px;
+  }
+
+  .command-line {
+    font-size: 14px;
+  }
+
+  .output-line {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Show snake mobile controls */
+  .snake-mobile-controls {
+    display: block;
+  }
+
+  /* Adjust snake container height for mobile controls */
+  .snake-terminal-container {
+    height: calc(100% - 220px) !important;
+    min-height: 200px;
+  }
+
+  /* BSOD adjustments for mobile */
+  .bsod-content {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .sad-face {
+    font-size: 80px;
+  }
+
+  .bsod-title {
+    font-size: 18px;
+  }
+
+  .bsod-body p,
+  .bsod-footer p {
+    font-size: 14px;
+  }
+
+  /* Desktop mode adjustments */
+  .desktop-icons {
+    top: 20px;
+    left: 20px;
+  }
+
+  .desktop-icon {
+    padding: 16px 20px;
+  }
+
+  .desktop-icon img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .taskbar {
+    padding: 0 16px;
+    height: 44px;
+  }
+
+  .taskbar-title {
+    font-size: 14px;
+  }
+
+  .taskbar-clock {
+    font-size: 12px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .terminal-title {
+    display: none;
+  }
+
+  .terminal-body {
+    padding: 8px;
+  }
+
+  .prompt {
+    font-size: 12px;
+  }
+
+  .command-line,
+  .output-line {
+    font-size: 12px;
+  }
+
+  .snake-dpad-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .snake-dpad {
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 50px 50px 50px;
+  }
+
+  .snake-dpad-center {
+    width: 50px;
+    height: 50px;
+  }
+}
