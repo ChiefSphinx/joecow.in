@@ -425,6 +425,7 @@ class Terminal {
 
     // Set snake active state
     this.isSnakeActive = true;
+    document.body.classList.add('snake-active');
 
     // Hide the input line while snake is active
     this.inputLine.style.visibility = 'hidden';
@@ -463,6 +464,7 @@ class Terminal {
     this.snakeInstance = new SnakeGame(snakeDiv, () => {
       // Cleanup when snake exits
       this.isSnakeActive = false;
+      document.body.classList.remove('snake-active');
       // Remove snake container if it exists
       const container = this.outputContainer.querySelector('.snake-terminal-container');
       if (container) container.remove();
