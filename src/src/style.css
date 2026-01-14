@@ -510,10 +510,16 @@ a:hover {
     display: block;
   }
 
-  /* Adjust snake container height for mobile controls */
+  /* When snake is active, add bottom padding to terminal body for D-pad */
+  body.snake-active .terminal-body {
+    padding-bottom: 280px;
+  }
+
+  /* Adjust snake container for mobile - fixed height above D-pad */
   .snake-terminal-container {
-    height: calc(100% - 220px) !important;
+    height: 250px !important;
     min-height: 200px;
+    max-height: 40vh;
   }
 
   /* BSOD adjustments for mobile */

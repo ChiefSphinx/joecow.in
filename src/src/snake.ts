@@ -126,17 +126,18 @@ export class SnakeGame {
     if (this.isWaitingToStart) {
       const validStartKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', ' ', 'Enter'];
       if (validStartKeys.includes(e.key)) {
-        this.startGame();
-        // If it's a direction key, also set the initial direction
+        // Determine starting direction
+        let dir = { x: 1, y: 0 }; // default right
         if (['ArrowUp', 'w'].includes(e.key)) {
-          this.direction = { x: 0, y: -1 };
+          dir = { x: 0, y: -1 };
         } else if (['ArrowDown', 's'].includes(e.key)) {
-          this.direction = { x: 0, y: 1 };
+          dir = { x: 0, y: 1 };
         } else if (['ArrowLeft', 'a'].includes(e.key)) {
-          this.direction = { x: -1, y: 0 };
+          dir = { x: -1, y: 0 };
         } else if (['ArrowRight', 'd'].includes(e.key)) {
-          this.direction = { x: 1, y: 0 };
+          dir = { x: 1, y: 0 };
         }
+        this.startGame(dir);
         return;
       }
       return;
@@ -308,8 +309,19 @@ export class SnakeGame {
     this.ctx.textAlign = 'start';
   }
 
-  private startGame() {
+  private startGame(direction: { x: number; y: number } = { x: 1, y: 0 }) {
     this.isWaitingToStart = false;
+    this.direction = direction;
+
+    // Rearrange snake segments so body is behind the direction of travel
+    const startX = Math.floor(this.cols / 2);
+    const startY = Math.floor(this.rows / 2);
+    this.snake = [
+      { x: startX, y: startY },
+      { x: startX - direction.x, y: startY - direction.y },
+      { x: startX - direction.x * 2, y: startY - direction.y * 2 },
+    ];
+
     this.loop();
   }
 } 
