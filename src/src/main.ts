@@ -400,7 +400,10 @@ class Terminal {
     snakeDiv.style.height = '100%';
     snakeDiv.style.width = '100%';
     this.outputContainer.appendChild(snakeDiv);
-    
+
+    // Scroll to ensure the snake game is visible
+    this.scrollToBottom();
+
     // Create snake game with exit callback
     this.snakeInstance = new SnakeGame(snakeDiv, () => {
       // Cleanup when snake exits
