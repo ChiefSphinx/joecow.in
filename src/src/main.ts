@@ -425,7 +425,6 @@ class Terminal {
 
     // Set snake active state
     this.isSnakeActive = true;
-    document.body.classList.add('snake-active');
 
     // Hide the input line while snake is active
     this.inputLine.style.visibility = 'hidden';
@@ -464,7 +463,6 @@ class Terminal {
     this.snakeInstance = new SnakeGame(snakeDiv, () => {
       // Cleanup when snake exits
       this.isSnakeActive = false;
-      document.body.classList.remove('snake-active');
       // Remove snake container if it exists
       const container = this.outputContainer.querySelector('.snake-terminal-container');
       if (container) container.remove();
@@ -492,7 +490,8 @@ class Terminal {
       <button class="snake-exit-btn" aria-label="Exit game">EXIT</button>
     `;
 
-    document.body.appendChild(this.snakeMobileControls);
+    // Append to output container so it's in the document flow, below the snake canvas
+    this.outputContainer.appendChild(this.snakeMobileControls);
 
     // Add event listeners for touch controls
     const simulateKey = (key: string) => {
@@ -504,6 +503,9 @@ class Terminal {
     this.snakeMobileControls.querySelector('.left')?.addEventListener('click', () => simulateKey('ArrowLeft'));
     this.snakeMobileControls.querySelector('.right')?.addEventListener('click', () => simulateKey('ArrowRight'));
     this.snakeMobileControls.querySelector('.snake-exit-btn')?.addEventListener('click', () => simulateKey('Escape'));
+
+    // Scroll to show the controls
+    this.scrollToBottom();
   }
 
   private removeSnakeMobileControls() {

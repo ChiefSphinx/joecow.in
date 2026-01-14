@@ -382,11 +382,6 @@ a:hover {
 /* Snake Mobile Controls */
 .snake-mobile-controls {
   display: none;
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
 }
 
 .snake-dpad {
@@ -505,21 +500,19 @@ a:hover {
     line-height: 1.5;
   }
 
-  /* Show snake mobile controls */
+  /* Show snake mobile controls - positioned in flow below canvas */
   .snake-mobile-controls {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+    margin-top: 8px;
   }
 
-  /* When snake is active, add bottom padding to terminal body for D-pad */
-  body.snake-active .terminal-body {
-    padding-bottom: 280px;
-  }
-
-  /* Adjust snake container for mobile - fixed height above D-pad */
+  /* Adjust snake container for mobile */
   .snake-terminal-container {
-    height: 250px !important;
-    min-height: 200px;
-    max-height: 40vh;
+    height: 200px !important;
+    min-height: 150px;
   }
 
   /* BSOD adjustments for mobile */
