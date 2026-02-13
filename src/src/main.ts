@@ -285,6 +285,7 @@ class Terminal {
         this.executeCommand(currentText);
         this.resetTabCompletion();
       } else if (e.key === 'Backspace') {
+        if (document.activeElement === this.mobileInput) return;
         textNode.textContent = text.slice(0, -1);
         this.mobileInput.value = text.slice(0, -1);
         this.resetTabCompletion();
@@ -300,6 +301,7 @@ class Terminal {
         e.preventDefault();
         this.handleTabCompletion(textNode as Text);
       } else if (e.key.length === 1) {
+        if (document.activeElement === this.mobileInput) return;
         textNode.textContent = text + e.key;
         this.mobileInput.value = text + e.key;
         this.resetTabCompletion();
