@@ -18,6 +18,16 @@ class Terminal {
   private commandHistory: string[] = [];
   private historyIndex: number = -1;
   private currentInput: string = '';
+  private tabCompletionIndex: number = -1;
+  private lastTabInput: string = '';
+  private readonly commands: string[] = [
+    'help', 'cv', 'snake', 'clear', 'ls', 'whoami', 'date',
+    'cat cv.txt', 'cat readme.md', 'exit', 'sudo', 'rm -rf'
+  ];
+  private readonly fileArguments: Record<string, string[]> = {
+    'cat': ['cv.txt', 'readme.md'],
+    'ls': [],
+  };
 
   constructor() {
     this.container = document.querySelector<HTMLDivElement>('#app')!;
@@ -268,16 +278,22 @@ class Terminal {
 
       if (e.key === 'Enter') {
         this.executeCommand(text);
+        this.resetTabCompletion();
       } else if (e.key === 'Backspace') {
         textNode.textContent = text.slice(0, -1);
+        this.resetTabCompletion();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         this.navigateHistory(-1, textNode as Text);
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         this.navigateHistory(1, textNode as Text);
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        this.handleTabCompletion(textNode as Text);
       } else if (e.key.length === 1) {
         textNode.textContent = text + e.key;
+        this.resetTabCompletion();
       }
     };
 
@@ -466,6 +482,78 @@ class Terminal {
     }
 
     textNode.textContent = this.commandHistory[this.historyIndex];
+  }
+
+  private resetTabCompletion() {
+    this.tabCompletionIndex = -1;
+    this.lastTabInput = '';
+  }
+
+  private handleTabCompletion(textNode: Text) {
+    const input = textNode.textContent || '';
+    const inputLower = input.toLowerCase();
+
+    // If user typed something new, reset the cycle
+    if (this.lastTabInput && !inputLower.startsWith(this.lastTabInput)) {
+      this.resetTabCompletion();
+    }
+
+    // Parse the input to get command and argument parts
+    const parts = inputLower.split(/\s+/);
+    const baseCommand = parts[0] || '';
+    const currentArg = parts[1] || '';
+
+    // If we're completing an argument (command already typed with space)
+    if (parts.length > 1 || input.endsWith(' ')) {
+      this.completeArgument(textNode, baseCommand, currentArg, input);
+      return;
+    }
+
+    // Complete the command
+    this.completeCommand(textNode, inputLower);
+  }
+
+  private completeCommand(textNode: Text, input: string) {
+    const matches = this.commands.filter(cmd => 
+      cmd.toLowerCase().startsWith(input)
+    );
+
+    if (matches.length === 0) return;
+
+    // Cycle through matches
+    if (this.tabCompletionIndex === -1) {
+      this.lastTabInput = input;
+      this.tabCompletionIndex = 0;
+    } else {
+      this.tabCompletionIndex = (this.tabCompletionIndex + 1) % matches.length;
+    }
+
+    textNode.textContent = matches[this.tabCompletionIndex];
+  }
+
+  private completeArgument(textNode: Text, baseCommand: string, currentArg: string, originalInput: string) {
+    const validArgs = this.fileArguments[baseCommand];
+    if (!validArgs || validArgs.length === 0) return;
+
+    const matches = validArgs.filter(arg => 
+      arg.toLowerCase().startsWith(currentArg)
+    );
+
+    if (matches.length === 0) return;
+
+    // Preserve original spacing - find where the argument starts
+    const lastSpaceIndex = originalInput.lastIndexOf(' ');
+    const prefix = originalInput.substring(0, lastSpaceIndex + 1);
+
+    // Cycle through matches
+    if (this.tabCompletionIndex === -1) {
+      this.lastTabInput = currentArg;
+      this.tabCompletionIndex = 0;
+    } else {
+      this.tabCompletionIndex = (this.tabCompletionIndex + 1) % matches.length;
+    }
+
+    textNode.textContent = prefix + matches[this.tabCompletionIndex];
   }
 
   private async startSnakeGame() {
