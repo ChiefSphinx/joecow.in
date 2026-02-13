@@ -24,7 +24,6 @@ resource "azurerm_linux_web_app" "main" {
     minimum_tls_version = "1.2"
     health_check_path   = "/healthz"
     detailed_error_logging_enabled = true
-    http_logging_enabled          = true
   }
 
   app_settings = {
