@@ -18,10 +18,10 @@ provider "azurerm" {
 
 provider "cloudflare" {}
 
-data "cloudflare_account" "main" {}
+data "cloudflare_accounts" "this" {}
 
 resource "cloudflare_pages_project" "main" {
-  account_id        = data.cloudflare_account.main.id
+  account_id        = data.cloudflare_accounts.this.accounts[0].id
   name              = var.project_name
   production_branch = var.production_branch
 }
