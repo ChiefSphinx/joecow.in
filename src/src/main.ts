@@ -106,7 +106,7 @@ class Terminal {
         this.commandLine.insertBefore(textNode, this.cursor);
       }
       textNode.textContent = this.mobileInput.value;
-      this.scrollToBottom();
+      this.scrollToBottom(false);
     });
 
     // Handle Enter key from mobile keyboard
@@ -290,27 +290,27 @@ class Terminal {
         textNode.textContent = text.slice(0, -1);
         this.mobileInput.value = text.slice(0, -1);
         this.resetTabCompletion();
-        this.scrollToBottom();
+        this.scrollToBottom(false);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         this.navigateHistory(-1, textNode as Text);
         this.mobileInput.value = textNode.textContent || '';
-        this.scrollToBottom();
+        this.scrollToBottom(false);
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         this.navigateHistory(1, textNode as Text);
         this.mobileInput.value = textNode.textContent || '';
-        this.scrollToBottom();
+        this.scrollToBottom(false);
       } else if (e.key === 'Tab') {
         e.preventDefault();
         this.handleTabCompletion(textNode as Text);
-        this.scrollToBottom();
+        this.scrollToBottom(false);
       } else if (e.key.length === 1) {
         if (document.activeElement === this.mobileInput) return;
         textNode.textContent = text + e.key;
         this.mobileInput.value = text + e.key;
         this.resetTabCompletion();
-        this.scrollToBottom();
+        this.scrollToBottom(false);
       }
     };
 
@@ -460,21 +460,24 @@ class Terminal {
     this.outputContainer.innerHTML = '';
   }
 
-  private scrollToBottom() {
-    // Use requestAnimationFrame to ensure DOM updates are processed first
+  private scrollToBottom(smooth: boolean = true) {
     requestAnimationFrame(() => {
-      // Scroll the terminal body to show the latest content
       const terminalBody = document.querySelector('.terminal-body') as HTMLDivElement;
-      if (terminalBody) {
-        terminalBody.scrollTop = terminalBody.scrollHeight;
-      }
-      
-      // Also scroll the container as fallback
+      if (!terminalBody) return;
+
+      // Check if input line is already visible
+      const inputRect = this.inputLine.getBoundingClientRect();
+      const bodyRect = terminalBody.getBoundingClientRect();
+      const isVisible = inputRect.bottom <= bodyRect.bottom + 50;
+
+      // If already visible and this is a typing scroll, skip
+      if (isVisible && !smooth) return;
+
+      terminalBody.scrollTop = terminalBody.scrollHeight;
       this.container.scrollTop = this.container.scrollHeight;
-      
-      // Ensure the input line is visible using scrollIntoView
+
       if (this.inputLine && this.inputLine.isConnected) {
-        this.inputLine.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        this.inputLine.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant', block: 'end' });
       }
     });
   }
