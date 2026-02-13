@@ -388,10 +388,12 @@ a:hover {
 /* Mobile Input - Hidden text input for keyboard support */
 .mobile-input {
   position: absolute;
-  left: -9999px;
+  left: 0;
+  top: 0;
   opacity: 0;
   width: 1px;
   height: 1px;
+  pointer-events: none;
 }
 
 /* Snake Mobile Controls */
