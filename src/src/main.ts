@@ -277,7 +277,9 @@ class Terminal {
       const text = textNode.textContent || '';
 
       if (e.key === 'Enter') {
-        this.executeCommand(text);
+        // Re-read text in case tab completion modified it
+        const currentText = textNode.textContent || '';
+        this.executeCommand(currentText);
         this.resetTabCompletion();
       } else if (e.key === 'Backspace') {
         textNode.textContent = text.slice(0, -1);
