@@ -420,11 +420,18 @@ class Terminal {
     const line = document.createElement('div');
     line.className = 'output-line';
     this.outputContainer.appendChild(line);
-    for (let i = 0; i < text.length; i++) {
-      line.textContent += text[i];
-      this.scrollToBottom();
-      await this.sleep(speed);
+
+    // If speed is 0, output instantly (no character-by-character loop)
+    if (speed === 0) {
+      line.textContent = text;
+    } else {
+      for (let i = 0; i < text.length; i++) {
+        line.textContent += text[i];
+        await this.sleep(speed);
+      }
     }
+
+    this.scrollToBottom();
     this.isTyping = false;
     this.cursor.style.display = 'inline';
     // Show and enable the input line after typing
