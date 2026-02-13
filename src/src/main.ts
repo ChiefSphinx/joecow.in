@@ -112,7 +112,10 @@ class Terminal {
     this.mobileInput.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Enter' && !this.isSnakeActive && !this.isTyping) {
         e.preventDefault();
-        const command = this.mobileInput.value;
+        e.stopPropagation();
+        // Read from textNode.textContent to get tab-completed value
+        const textNode = this.commandLine.firstChild;
+        const command = (textNode && textNode.nodeType === Node.TEXT_NODE ? textNode.textContent : '') || this.mobileInput.value;
         this.mobileInput.value = '';
         this.executeCommand(command);
       }
@@ -283,18 +286,22 @@ class Terminal {
         this.resetTabCompletion();
       } else if (e.key === 'Backspace') {
         textNode.textContent = text.slice(0, -1);
+        this.mobileInput.value = text.slice(0, -1);
         this.resetTabCompletion();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         this.navigateHistory(-1, textNode as Text);
+        this.mobileInput.value = textNode.textContent || '';
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         this.navigateHistory(1, textNode as Text);
+        this.mobileInput.value = textNode.textContent || '';
       } else if (e.key === 'Tab') {
         e.preventDefault();
         this.handleTabCompletion(textNode as Text);
       } else if (e.key.length === 1) {
         textNode.textContent = text + e.key;
+        this.mobileInput.value = text + e.key;
         this.resetTabCompletion();
       }
     };
@@ -515,11 +522,13 @@ class Terminal {
     // If we're completing an argument (command already typed with space)
     if (parts.length > 1 || input.endsWith(' ')) {
       this.completeArgument(textNode, baseCommand, currentArg, input);
-      return;
+    } else {
+      // Complete the command
+      this.completeCommand(textNode, inputLower);
     }
 
-    // Complete the command
-    this.completeCommand(textNode, inputLower);
+    // Sync mobile input with the completed text
+    this.mobileInput.value = textNode.textContent || '';
   }
 
   private completeCommand(textNode: Text, input: string) {
