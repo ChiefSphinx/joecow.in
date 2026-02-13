@@ -37,6 +37,10 @@
       {
         "command": "clear",
         "description": "Clear terminal"
+      },
+      {
+        "command": "theme",
+        "description": "Toggle light/dark mode"
       }
     ]
   },

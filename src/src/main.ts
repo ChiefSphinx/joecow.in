@@ -20,9 +20,10 @@ class Terminal {
   private currentInput: string = '';
   private tabCompletionIndex: number = -1;
   private lastTabInput: string = '';
+  private currentTheme: 'light' | 'dark' = 'dark';
   private readonly commands: string[] = [
     'help', 'cv', 'snake', 'clear', 'ls', 'whoami', 'date',
-    'cat cv.txt', 'cat readme.md', 'exit', 'sudo', 'rm -rf'
+    'cat cv.txt', 'cat readme.md', 'exit', 'sudo', 'rm -rf', 'theme'
   ];
   private readonly fileArguments: Record<string, string[]> = {
     'cat': ['cv.txt', 'readme.md'],
@@ -31,7 +32,34 @@ class Terminal {
 
   constructor() {
     this.container = document.querySelector<HTMLDivElement>('#app')!;
+    this.initTheme();
     this.setupTerminal();
+  }
+
+  private initTheme() {
+    const savedTheme = localStorage.getItem('terminal-theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      this.currentTheme = savedTheme;
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.currentTheme = prefersDark ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', this.currentTheme);
+  }
+
+  private toggleTheme() {
+    this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', this.currentTheme);
+    localStorage.setItem('terminal-theme', this.currentTheme);
+    this.updateThemeButton();
+  }
+
+  private updateThemeButton() {
+    const themeBtn = document.querySelector<HTMLButtonElement>('#theme-toggle');
+    if (themeBtn) {
+      themeBtn.textContent = this.currentTheme === 'dark' ? '☀️' : '🌙';
+      themeBtn.setAttribute('aria-label', `Switch to ${this.currentTheme === 'dark' ? 'light' : 'dark'} mode`);
+    }
   }
 
   private setupTerminal() {
@@ -44,6 +72,7 @@ class Terminal {
             <span class="terminal-button maximize" id="maximize-btn" role="button" aria-label="Maximize terminal"></span>
           </div>
           <div class="terminal-title">joe@joecow.in: ~/terminal</div>
+          <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode">${this.currentTheme === 'dark' ? '☀️' : '🌙'}</button>
         </div>
         <div class="terminal-body">
           <div class="terminal-output" id="terminal-output"></div>
@@ -71,6 +100,7 @@ class Terminal {
     const closeBtn = document.querySelector<HTMLSpanElement>('#close-btn')!;
     const minimizeBtn = document.querySelector<HTMLSpanElement>('#minimize-btn')!;
     const maximizeBtn = document.querySelector<HTMLSpanElement>('#maximize-btn')!;
+    const themeToggleBtn = document.querySelector<HTMLButtonElement>('#theme-toggle')!;
 
     closeBtn.addEventListener('click', () => {
       trackButtonClick('close');
@@ -83,6 +113,9 @@ class Terminal {
     maximizeBtn.addEventListener('click', () => {
       trackButtonClick('maximize');
       this.maximizeTerminal();
+    });
+    themeToggleBtn.addEventListener('click', () => {
+      this.toggleTheme();
     });
   }
 
@@ -362,6 +395,10 @@ class Terminal {
         break;
       case 'date':
         await this.typeText(new Date().toLocaleString() + '\n', 0);
+        break;
+      case 'theme':
+        this.toggleTheme();
+        await this.typeText(`Theme switched to ${this.currentTheme} mode\n`, 0);
         break;
       case 'snake':
         await this.startSnakeGame();
