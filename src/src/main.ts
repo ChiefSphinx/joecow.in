@@ -259,6 +259,13 @@ class Terminal {
 
   private async startTerminal() {
     const welcome = getWelcomeMessages();
+    if (welcome.asciiArt && welcome.asciiArt.length > 0) {
+      await this.typeText('\n', 0);
+      for (const line of welcome.asciiArt) {
+        await this.typeText(line + '\n', 0);
+      }
+      await this.typeText('\n', 0);
+    }
     await this.typeText(`${welcome.greeting}\n`, 0);
     await this.typeText(`${welcome.instruction}\n\n`, 0);
     this.showPrompt();

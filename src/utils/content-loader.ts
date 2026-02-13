@@ -34,6 +34,7 @@ export interface TerminalContent {
   welcome: {
     greeting: string;
     instruction: string;
+    asciiArt?: string[];
   };
   help: {
     title: string;
@@ -109,10 +110,11 @@ export function formatFiles(): string {
   return `\n${terminal.files.join('\n')}\n`;
 }
 
-export function getWelcomeMessages(): { greeting: string; instruction: string } {
+export function getWelcomeMessages(): { greeting: string; instruction: string; asciiArt?: string[] } {
   const terminal = getTerminalContent();
   return {
     greeting: terminal.welcome.greeting,
-    instruction: terminal.welcome.instruction
+    instruction: terminal.welcome.instruction,
+    asciiArt: terminal.welcome.asciiArt
   };
 }
