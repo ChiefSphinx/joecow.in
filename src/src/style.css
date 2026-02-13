@@ -123,6 +123,21 @@ body {
   51%, 100% { opacity: 0; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+    opacity: 1;
+  }
+  
+  .terminal-window,
+  .bsod,
+  .desktop-icon,
+  .snake-dpad-btn,
+  .snake-exit-btn {
+    transition: none;
+  }
+}
+
 /* Links */
 a {
   color: #00ff00;
