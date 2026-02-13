@@ -6,7 +6,7 @@ This repository contains the source code for my personal website, featuring a un
 
 - **Frontend:**
   - Vite
-  - React (or your chosen framework)
+  - TypeScript (vanilla)
   - Node.js
   - Docker
 
