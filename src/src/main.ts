@@ -106,6 +106,7 @@ class Terminal {
         this.commandLine.insertBefore(textNode, this.cursor);
       }
       textNode.textContent = this.mobileInput.value;
+      this.scrollToBottom();
     });
 
     // Handle Enter key from mobile keyboard
@@ -289,22 +290,27 @@ class Terminal {
         textNode.textContent = text.slice(0, -1);
         this.mobileInput.value = text.slice(0, -1);
         this.resetTabCompletion();
+        this.scrollToBottom();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         this.navigateHistory(-1, textNode as Text);
         this.mobileInput.value = textNode.textContent || '';
+        this.scrollToBottom();
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         this.navigateHistory(1, textNode as Text);
         this.mobileInput.value = textNode.textContent || '';
+        this.scrollToBottom();
       } else if (e.key === 'Tab') {
         e.preventDefault();
         this.handleTabCompletion(textNode as Text);
+        this.scrollToBottom();
       } else if (e.key.length === 1) {
         if (document.activeElement === this.mobileInput) return;
         textNode.textContent = text + e.key;
         this.mobileInput.value = text + e.key;
         this.resetTabCompletion();
+        this.scrollToBottom();
       }
     };
 
