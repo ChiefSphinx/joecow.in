@@ -27,3 +27,9 @@ variable "production_branch" {
   type        = string
   default     = "main"
 }
+
+variable "zone_name" {
+  description = "The Cloudflare zone name"
+  type        = string
+  default     = "joecow.in"
+}
