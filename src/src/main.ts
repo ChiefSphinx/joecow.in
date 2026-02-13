@@ -332,12 +332,29 @@ class Terminal {
         break;
       case 'snake':
         await this.startSnakeGame();
-        // Don't show prompt after snake - it will be handled when the game ends
+        return;
+      case 'exit':
+        await this.typeText('Goodbye!\n', 0);
+        this.showBSOD();
+        return;
+      case 'sudo':
+        await this.typeText('Nice try! ;)\n', 0);
+        break;
+      case 'rm':
+      case 'rm -rf':
+      case 'rm -rf /':
+      case 'rm -rf /*':
+        await this.typeText('I don\'t think so...\n', 0);
+        this.showBSOD();
         return;
       case '':
         break;
       default:
-        await this.typeText(`Command not found: ${command}\n`, 0);
+        if (cmd.startsWith('sudo ')) {
+          await this.typeText('Nice try! ;)\n', 0);
+        } else {
+          await this.typeText(`Command not found: ${command}\n`, 0);
+        }
         break;
     }
     
