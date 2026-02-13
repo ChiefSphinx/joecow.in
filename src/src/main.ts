@@ -15,6 +15,9 @@ class Terminal {
   private keydownHandler!: (e: KeyboardEvent) => void;
   private mobileInput!: HTMLInputElement;
   private snakeMobileControls: HTMLDivElement | null = null;
+  private commandHistory: string[] = [];
+  private historyIndex: number = -1;
+  private currentInput: string = '';
 
   constructor() {
     this.container = document.querySelector<HTMLDivElement>('#app')!;
@@ -255,12 +258,6 @@ class Terminal {
 
       if (this.isTyping) return;
 
-      // Prevent arrow keys from scrolling when not in snake mode
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        e.preventDefault();
-        return;
-      }
-
       // Get the text node before the cursor
       let textNode = this.commandLine.firstChild;
       if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
@@ -268,10 +265,17 @@ class Terminal {
         this.commandLine.insertBefore(textNode, this.cursor);
       }
       const text = textNode.textContent || '';
+
       if (e.key === 'Enter') {
         this.executeCommand(text);
       } else if (e.key === 'Backspace') {
         textNode.textContent = text.slice(0, -1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.navigateHistory(-1, textNode as Text);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.navigateHistory(1, textNode as Text);
       } else if (e.key.length === 1) {
         textNode.textContent = text + e.key;
       }
@@ -285,6 +289,15 @@ class Terminal {
     
     // Track command usage
     trackCommandUsage(cmd);
+
+    // Save to history if not empty
+    if (cmd) {
+      this.commandHistory.push(command.trim());
+    }
+    
+    // Reset history navigation
+    this.historyIndex = -1;
+    this.currentInput = '';
     
     // Add command to output
     this.addToOutput(`joe@joecow.in:~$ ${command}`);
@@ -411,6 +424,31 @@ class Terminal {
 
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private navigateHistory(direction: number, textNode: Text) {
+    if (this.commandHistory.length === 0) return;
+
+    if (direction === -1) {
+      if (this.historyIndex === -1) {
+        this.currentInput = textNode.textContent || '';
+        this.historyIndex = this.commandHistory.length - 1;
+      } else if (this.historyIndex > 0) {
+        this.historyIndex--;
+      }
+    } else {
+      if (this.historyIndex === -1) {
+        return;
+      } else if (this.historyIndex < this.commandHistory.length - 1) {
+        this.historyIndex++;
+      } else {
+        this.historyIndex = -1;
+        textNode.textContent = this.currentInput;
+        return;
+      }
+    }
+
+    textNode.textContent = this.commandHistory[this.historyIndex];
   }
 
   private async startSnakeGame() {
