@@ -1,10 +1,35 @@
 :root {
   color-scheme: light dark;
+  --bg-body: #1a1a1a;
+  --bg-terminal: #000;
+  --bg-header: #2a2a2a;
+  --border-color: #333;
+  --text-primary: #00ff00;
+  --text-secondary: #ccc;
+  --text-output: #00ff00;
+  --glow-color: rgba(0, 255, 0, 0.1);
+  --scrollbar-track: #1a1a1a;
+  --scrollbar-thumb: #333;
+  --scrollbar-thumb-hover: #555;
+}
+
+[data-theme="light"] {
+  --bg-body: #f5f5f5;
+  --bg-terminal: #ffffff;
+  --bg-header: #e8e8e8;
+  --border-color: #d0d0d0;
+  --text-primary: #006400;
+  --text-secondary: #333;
+  --text-output: #006400;
+  --glow-color: rgba(0, 100, 0, 0.1);
+  --scrollbar-track: #f0f0f0;
+  --scrollbar-thumb: #ccc;
+  --scrollbar-thumb-hover: #aaa;
 }
 
 body {
-  background: #1a1a1a;
-  color: #00ff00;
+  background: var(--bg-body);
+  color: var(--text-primary);
   font-family: 'Fira Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
   margin: 0;
   padding: 0;
@@ -22,19 +47,19 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #000;
-  border: 1px solid #333;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+  background: var(--bg-terminal);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 20px var(--glow-color);
 }
 
 /* Terminal Header */
 .terminal-header {
-  background: #2a2a2a;
+  background: var(--bg-header);
   padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border-color);
   user-select: none;
 }
 
@@ -68,9 +93,33 @@ body {
 }
 
 .terminal-title {
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  font-family: inherit;
+  margin-left: 12px;
+}
+
+.theme-toggle:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.theme-toggle:focus {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
 }
 
 /* Terminal Body */
@@ -78,7 +127,7 @@ body {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background: #000;
+  background: var(--bg-terminal);
 }
 
 .terminal-output {
@@ -90,6 +139,7 @@ body {
   line-height: 1.4;
   white-space: pre-wrap;
   word-wrap: break-word;
+  color: var(--text-output);
 }
 
 /* Terminal Input Line */
@@ -100,20 +150,20 @@ body {
 }
 
 .prompt {
-  color: #00ff00;
+  color: var(--text-primary);
   font-weight: bold;
   user-select: none;
   white-space: nowrap;
 }
 
 .command-line {
-  color: #00ff00;
+  color: var(--text-primary);
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 
 .cursor {
-  color: #00ff00;
+  color: var(--text-primary);
   animation: blink 1s infinite;
   display: inline;
 }
@@ -140,12 +190,12 @@ body {
 
 /* Links */
 a {
-  color: #00ff00;
+  color: var(--text-primary);
   text-decoration: underline;
 }
 
 a:hover {
-  color: #0f0;
+  color: var(--text-primary);
   text-decoration: none;
 }
 
@@ -155,16 +205,16 @@ a:hover {
 }
 
 .terminal-body::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--scrollbar-track);
 }
 
 .terminal-body::-webkit-scrollbar-thumb {
-  background: #333;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 .terminal-body::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Hide logos and card styles from Vite template */
