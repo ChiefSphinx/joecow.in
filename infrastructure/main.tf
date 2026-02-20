@@ -22,15 +22,19 @@ data "cloudflare_accounts" "this" {
   name = var.account_name
 }
 
+locals {
+  account_id = data.cloudflare_accounts.this.result[0].id
+}
+
 resource "cloudflare_zone" "joecowin" {
   account = {
-    id = data.cloudflare_accounts.this.accounts[0].id
+    id = local.account_id
   }
-  name       = var.zone_name
+  name = var.zone_name
 }
 
 resource "cloudflare_pages_project" "joecowin" {
-  account_id        = data.cloudflare_accounts.this.accounts[0].id
+  account_id        = local.account_id
   name              = var.project_name
   production_branch = var.production_branch
 }
