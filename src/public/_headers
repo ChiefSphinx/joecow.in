@@ -6,7 +6,7 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Permissions-Policy: clipboard-read=(), clipboard-write=(), geolocation=()
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-GiiA7Ili+8qNdalj3kWgpF4hU3Hc8U5tdeNLYtF01NE=' https://*.posthog.com https://eu-assets.i.posthog.com https://static.cloudflareinsights.com; connect-src 'self' https://*.posthog.com https://eu.i.posthog.com https://static.cloudflareinsights.com https://cloudflareinsights.com; frame-src 'self' https://*.posthog.com https://eu.i.posthog.com; img-src 'self' https://*.posthog.com https://eu.i.posthog.com https://eu-assets.i.posthog.com data:; style-src 'self' 'unsafe-inline' https://*.posthog.com https://eu-assets.i.posthog.com; worker-src 'self' blob:
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-GiiA7Ili+8qNdalj3kWgpF4hU3Hc8U5tdeNLYtF01NE=' 'sha256-xNtc1cBNWAUpe6WSbB70/stu9b+9l/aJyc1jLakChiE=' https://*.posthog.com https://eu-assets.i.posthog.com https://static.cloudflareinsights.com; connect-src 'self' https://*.posthog.com https://eu.i.posthog.com https://static.cloudflareinsights.com https://cloudflareinsights.com; frame-src 'self' https://*.posthog.com https://eu.i.posthog.com; img-src 'self' https://*.posthog.com https://eu.i.posthog.com https://eu-assets.i.posthog.com data:; style-src 'self' 'unsafe-inline' https://*.posthog.com https://eu-assets.i.posthog.com; worker-src 'self' blob:
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
