@@ -17,6 +17,10 @@
     <meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)" />
     <meta name="msapplication-TileColor" content="#1a1a1a" />
 
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" />
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://joecow.in/" />
@@ -35,6 +39,25 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://joecow.in/" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Joseph Cowin",
+      "url": "https://joecow.in",
+      "jobTitle": "DevSecOps Engineer",
+      "description": "DevSecOps Engineer specializing in Azure, Kubernetes, Terraform, and cloud security.",
+      "sameAs": [
+        "https://github.com/ChiefSphinx",
+        "https://linkedin.com/in/josephcowin"
+      ]
+    }
+    </script>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2b757ef916574abca04e02b4a94c680a"}'></script>
   </head>
   <body>
     <div id="app"></div>
