@@ -46,12 +46,104 @@ export interface TerminalContent {
   files: string[];
 }
 
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(isString);
+}
+
+function isContact(value: unknown): value is Contact {
+  if (typeof value !== 'object' || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  return isString(obj.email) && isString(obj.github) && isString(obj.linkedin);
+}
+
+function isPosition(value: unknown): value is Position {
+  if (typeof value !== 'object' || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    isString(obj.title) &&
+    isString(obj.period) &&
+    isStringArray(obj.achievements) &&
+    isStringArray(obj.skills)
+  );
+}
+
+function isExperience(value: unknown): value is Experience {
+  if (typeof value !== 'object' || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    isString(obj.company) &&
+    isString(obj.location) &&
+    isString(obj.duration) &&
+    Array.isArray(obj.positions) &&
+    obj.positions.every(isPosition)
+  );
+}
+
+function isCVData(value: unknown): value is CVData {
+  if (typeof value !== 'object' || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    isString(obj.name) &&
+    isString(obj.title) &&
+    isString(obj.about) &&
+    Array.isArray(obj.experience) &&
+    obj.experience.every(isExperience) &&
+    isStringArray(obj.coreSkills) &&
+    isContact(obj.contact)
+  );
+}
+
+function isTerminalContent(value: unknown): value is TerminalContent {
+  if (typeof value !== 'object' || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  
+  const welcome = obj.welcome;
+  if (typeof welcome !== 'object' || welcome === null) return false;
+  const welcomeObj = welcome as Record<string, unknown>;
+  if (!isString(welcomeObj.greeting) || !isString(welcomeObj.instruction)) return false;
+  if (welcomeObj.asciiArt !== undefined && !isStringArray(welcomeObj.asciiArt)) return false;
+
+  const help = obj.help;
+  if (typeof help !== 'object' || help === null) return false;
+  const helpObj = help as Record<string, unknown>;
+  if (!isString(helpObj.title)) return false;
+  if (!Array.isArray(helpObj.commands)) return false;
+  for (const cmd of helpObj.commands) {
+    if (typeof cmd !== 'object' || cmd === null) return false;
+    const cmdObj = cmd as Record<string, unknown>;
+    if (!isString(cmdObj.command) || !isString(cmdObj.description)) return false;
+  }
+
+  return isStringArray(obj.files);
+}
+
+function validateCVData(data: unknown): CVData {
+  if (!isCVData(data)) {
+    throw new Error('Invalid CV data structure');
+  }
+  return data;
+}
+
+function validateTerminalContent(data: unknown): TerminalContent {
+  if (!isTerminalContent(data)) {
+    throw new Error('Invalid terminal content structure');
+  }
+  return data;
+}
+
+const validatedCVData = validateCVData(cvData);
+const validatedTerminalContent = validateTerminalContent(terminalContent);
+
 export function getCVData(): CVData {
-  return cvData as CVData;
+  return validatedCVData;
 }
 
 export function getTerminalContent(): TerminalContent {
-  return terminalContent as TerminalContent;
+  return validatedTerminalContent;
 }
 
 export function formatCV(): string {
