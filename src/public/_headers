@@ -1,0 +1,12 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: no-referrer-when-downgrade
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Permissions-Policy: clipboard-read=(), clipboard-write=(), geolocation=()
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://*.posthog.com https://eu-assets.i.posthog.com; connect-src 'self' https://*.posthog.com https://eu.i.posthog.com; frame-src 'self' https://*.posthog.com https://eu.i.posthog.com; img-src 'self' https://*.posthog.com https://eu.i.posthog.com https://eu-assets.i.posthog.com data:; style-src 'self' 'unsafe-inline' https://*.posthog.com https://eu-assets.i.posthog.com
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
