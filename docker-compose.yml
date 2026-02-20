@@ -1,9 +1,0 @@
-version: '3.8'
-
-services:
-  joecow-in:
-    build: .
-    ports:
-      - "6969:80"
-    restart: unless-stopped
-    container_name: joecow-in-app
