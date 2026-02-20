@@ -1,0 +1,92 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - '.github/workflows/cloudflare-pages.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - '.github/workflows/cloudflare-pages.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test (unit + e2e)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+          cache-dependency-path: 'src/package-lock.json'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('src/package-lock.json') }}
+
+      - name: Install dependencies
+        working-directory: ./src
+        run: npm ci
+
+      - name: Install Playwright browsers (with dependencies)
+        working-directory: ./src
+        run: npx playwright install --with-deps
+
+      - name: Run unit tests (Vitest)
+        working-directory: ./src
+        run: npm run test -- --reporter=dot
+
+      - name: Run e2e tests (Playwright)
+        working-directory: ./src
+        run: npm run test:e2e -- --reporter=line
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: Production
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: 'src/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./src
+        run: npm ci
+
+      - name: Build
+        working-directory: ./src
+        run: npm run build
+        env:
+          VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
+          VITE_POSTHOG_HOST: ${{ secrets.VITE_POSTHOG_HOST }}
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: joecowin
+          directory: src/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
