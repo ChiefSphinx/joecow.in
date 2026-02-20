@@ -18,7 +18,9 @@ provider "azurerm" {
 
 provider "cloudflare" {}
 
-data "cloudflare_accounts" "this" {}
+data "cloudflare_accounts" "this" {
+  name = var.account_name
+}
 
 resource "cloudflare_zone" "joecowin" {
   account = {
