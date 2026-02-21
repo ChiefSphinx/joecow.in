@@ -83,7 +83,7 @@ export class InputHandler implements InputHandlerInterface {
     mobileInput.addEventListener('focus', () => {
       setTimeout(() => {
         this.terminalUI.scrollToBottom(false)
-      }, 100)
+      }, 350)
     })
   }
 
@@ -251,8 +251,26 @@ export class InputHandler implements InputHandlerInterface {
 
   private setupKeyboardVisibilityHandler(): void {
     if (window.visualViewport) {
+      let previousHeight = window.visualViewport.height
+
       this.keyboardResizeHandler = () => {
-        this.terminalUI.scrollToBottom(false)
+        if (!window.visualViewport) return
+        const currentHeight = window.visualViewport.height
+        const keyboardOpening = currentHeight < previousHeight
+        const keyboardClosing = currentHeight > previousHeight
+
+        if (keyboardOpening) {
+          setTimeout(() => {
+            this.terminalUI.scrollToBottom(false)
+          }, 100)
+        } else if (keyboardClosing) {
+          setTimeout(() => {
+            this.terminalUI.scrollToBottom(false)
+            window.scrollTo(0, 0)
+          }, 100)
+        }
+
+        previousHeight = currentHeight
       }
       window.visualViewport.addEventListener('resize', this.keyboardResizeHandler)
     }
