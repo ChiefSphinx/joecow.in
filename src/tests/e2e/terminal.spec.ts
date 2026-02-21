@@ -59,13 +59,35 @@ test.describe('Mobile viewport (375x667)', () => {
     await expect(page.getByText('██╗ ██████╗')).not.toBeVisible()
   })
 
-  test('mobile input is visible and functional', async ({ page }) => {
+  test('mobile input is positioned inline within input line', async ({ page }) => {
     await page.goto('/')
     const mobileInput = page.locator('#mobile-input')
-    await expect(mobileInput).toBeVisible()
+    const inputLine = page.locator('#terminal-input-line')
+    await expect(mobileInput).toBeAttached()
+    const inputBox = await mobileInput.boundingBox()
+    const lineBox = await inputLine.boundingBox()
+    expect(inputBox).not.toBeNull()
+    expect(lineBox).not.toBeNull()
+    if (inputBox && lineBox) {
+      expect(inputBox.x).toBeGreaterThanOrEqual(lineBox.x - 1)
+      expect(inputBox.y).toBeGreaterThanOrEqual(lineBox.y - 1)
+    }
+  })
+
+  test('mobile input is functional when focused', async ({ page }) => {
+    await page.goto('/')
+    const mobileInput = page.locator('#mobile-input')
+    await mobileInput.focus()
     await mobileInput.fill('help')
     await mobileInput.press('Enter')
     await expect(page.getByText('Available commands:')).toBeVisible()
+  })
+
+  test('tapping input line focuses mobile input', async ({ page }) => {
+    await page.goto('/')
+    await page.locator('#terminal-input-line').click()
+    const mobileInput = page.locator('#mobile-input')
+    await expect(mobileInput).toBeFocused()
   })
 
   test('tapping terminal body focuses mobile input', async ({ page }) => {
@@ -86,6 +108,7 @@ test.describe('Mobile viewport (375x667)', () => {
 
   test('snake game shows mobile controls on mobile', async ({ page }) => {
     await page.goto('/')
+    await page.locator('#mobile-input').focus()
     await page.locator('#mobile-input').fill('snake')
     await page.locator('#mobile-input').press('Enter')
     await expect(page.locator('.snake-mobile-controls')).toBeVisible()

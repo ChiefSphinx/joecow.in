@@ -79,6 +79,12 @@ export class InputHandler implements InputHandlerInterface {
         this.executeCommand(command)
       }
     })
+
+    mobileInput.addEventListener('focus', () => {
+      setTimeout(() => {
+        this.terminalUI.scrollToBottom(false)
+      }, 100)
+    })
   }
 
   setSnakeActive(active: boolean): void {

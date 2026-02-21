@@ -48,8 +48,8 @@ export class TerminalUI implements TerminalUIInterface {
           <div class="terminal-input-line" id="terminal-input-line">
             <span class="prompt">${UI.PROMPT}</span>
             <span class="command-line" id="command-line"><span class="cursor" id="cursor">█</span></span>
+            <input type="text" class="mobile-input" id="mobile-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Terminal input" placeholder="Type a command..." />
           </div>
-          <input type="text" class="mobile-input" id="mobile-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Terminal input" placeholder="Type a command..." />
         </div>
       </div>
     `

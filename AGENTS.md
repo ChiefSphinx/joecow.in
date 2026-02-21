@@ -62,3 +62,43 @@ Unit tests mirror the source structure. E2E tests in `src/tests/e2e/`.
 - No comments unless explicitly requested
 - Interfaces for type safety and dependency injection
 - Constants defined in `types.ts`
+
+## Mobile Support
+
+The terminal UI is fully responsive with mobile-first optimizations.
+
+### Breakpoint
+
+- Mobile: < 480px width (condensed ASCII art)
+- Tablet/Desktop: >= 480px width (full ASCII art)
+
+### Responsive Features
+
+| Feature | Mobile (<480px) | Desktop |
+|---------|-----------------|---------|
+| ASCII Art | Condensed (32-char) | Full banner (73-char) |
+| Input | Inline overlay on focus | Keystroke capture |
+| Snake Controls | D-pad touch controls | Keyboard arrows |
+
+### Mobile Input Implementation
+
+On mobile devices, the input is styled as an inline overlay:
+- Positioned absolutely within `.terminal-input-line`
+- Hidden by default (transparent), captures touch events
+- Text syncs to `.command-line` for visual feedback
+- 16px font-size prevents iOS auto-zoom
+- `visualViewport` API scrolls input into view when keyboard opens
+- Focus event triggers scroll to keep input visible
+
+### Safe Area Insets
+
+Support for notched devices (iPhone X+) via `env(safe-area-inset-*)`:
+- Header padding-top
+- Terminal body scroll padding
+
+### Touch Optimizations
+
+- `touch-action: manipulation` prevents double-tap zoom
+- `-webkit-tap-highlight-color: transparent`
+- `overscroll-behavior: contain` prevents pull-to-refresh
+- Expanded touch targets (28px buttons)

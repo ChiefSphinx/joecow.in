@@ -131,6 +131,18 @@ npm run typecheck
 npm run format
 ```
 
+## Mobile Features
+
+The terminal UI is optimized for mobile devices:
+
+- **Responsive ASCII Art**: Condensed version on screens < 480px
+- **Inline Input Overlay**: Input appears over command-line when focused
+- **Safe Area Support**: Proper spacing on notched devices (iPhone X+)
+- **Touch Controls**: D-pad for snake game, larger tap targets
+- **iOS Optimizations**: 16px font prevents auto-zoom, pull-to-refresh blocked
+
+Viewport detection occurs at load time via `isMobileViewport()` in `main.ts`.
+
 ## Infrastructure Deployment
 
 The production site runs on Cloudflare Pages. The GitHub Actions workflow at `.github/workflows/cloudflare-pages.yml` builds and deploys the site whenever changes land on `main`.
