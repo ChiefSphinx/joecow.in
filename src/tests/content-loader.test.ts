@@ -28,10 +28,10 @@ describe('content-loader formatting', () => {
   it('formatCV includes name and title', () => {
     const cv = getCVData()
     const s = formatCV()
-    expect(s).toContain('Name:')
     expect(s).toContain(cv.name)
-    expect(s).toContain('Title:')
     expect(s).toContain(cv.title)
+    expect(s).toContain('Summary:')
+    expect(s).toContain('Experience:')
   })
 
   it('formatCV includes contact URLs', () => {

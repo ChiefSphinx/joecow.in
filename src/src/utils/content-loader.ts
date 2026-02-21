@@ -4,9 +4,12 @@ import terminalContent from '../../data/terminal-content.json';
 export interface CVData {
   name: string;
   title: string;
-  about: string;
+  summary: string;
+  selectedAchievements: string[];
   experience: Experience[];
-  coreSkills: string[];
+  technicalSkills: Record<string, string>;
+  education: Education[];
+  certifications: string[];
   contact: Contact;
 }
 
@@ -24,7 +27,14 @@ export interface Position {
   skills: string[];
 }
 
+export interface Education {
+  degree: string;
+  institution: string;
+  year: string;
+}
+
 export interface Contact {
+  phone: string;
   email: string;
   github: string;
   linkedin: string;
@@ -51,7 +61,18 @@ function isStringArray(value: unknown): value is string[] {
 function isContact(value: unknown): value is Contact {
   if (typeof value !== 'object' || value === null) return false;
   const obj = value as Record<string, unknown>;
-  return isString(obj.email) && isString(obj.github) && isString(obj.linkedin);
+  return isString(obj.phone) && isString(obj.email) && isString(obj.github) && isString(obj.linkedin);
+}
+
+function isEducation(value: unknown): value is Education {
+  if (typeof value !== 'object' || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  return isString(obj.degree) && isString(obj.institution) && isString(obj.year);
+}
+
+function isTechnicalSkills(value: unknown): value is Record<string, string> {
+  if (typeof value !== 'object' || value === null) return false;
+  return Object.values(value as Record<string, unknown>).every(isString);
 }
 
 function isPosition(value: unknown): value is Position {
@@ -83,10 +104,14 @@ function isCVData(value: unknown): value is CVData {
   return (
     isString(obj.name) &&
     isString(obj.title) &&
-    isString(obj.about) &&
+    isString(obj.summary) &&
+    isStringArray(obj.selectedAchievements) &&
     Array.isArray(obj.experience) &&
     obj.experience.every(isExperience) &&
-    isStringArray(obj.coreSkills) &&
+    isTechnicalSkills(obj.technicalSkills) &&
+    Array.isArray(obj.education) &&
+    (obj.education as unknown[]).every(isEducation) &&
+    isStringArray(obj.certifications) &&
     isContact(obj.contact)
   );
 }
@@ -133,37 +158,58 @@ export function getTerminalContent(): TerminalContent {
 export function formatCV(): string {
   const cv = getCVData();
 
-  let content = `\nName: ${cv.name}\n`;
-  content += `Title: ${cv.title}\n`;
-  content += `About: ${cv.about}\n\n`;
-  content += `Experience:\n\n`;
+  let content = `\n${cv.name} — ${cv.title}\n\n`;
 
+  content += `Summary:\n${cv.summary}\n\n`;
+
+  content += `Selected Achievements:\n`;
+  cv.selectedAchievements.forEach(a => {
+    content += `  • ${a}\n`;
+  });
+  content += `\n`;
+
+  content += `Experience:\n\n`;
   cv.experience.forEach(exp => {
-    content += `🏢 ${exp.company}`;
-    if (exp.duration) {
-      content += ` (${exp.duration})`;
-    }
-    if (exp.location) {
-      content += ` | ${exp.location}`;
-    }
-    content += `\n\n`;
+    content += `  ${exp.company}`;
+    if (exp.location) content += ` | ${exp.location}`;
+    content += `\n`;
 
     exp.positions.forEach(position => {
-      content += `  📍 ${position.title} (${position.period})\n`;
+      content += `\n    ${position.title}\n`;
+      content += `    ${position.period}\n`;
       position.achievements.forEach(achievement => {
-        content += `  • ${achievement}\n`;
+        content += `    • ${achievement}\n`;
       });
       if (position.skills.length > 0) {
-        content += `  Skills: ${position.skills.join(', ')}\n`;
+        content += `    Skills: ${position.skills.join(', ')}\n`;
       }
-      content += `\n`;
     });
+    content += `\n`;
   });
 
-  content += `Core Skills: ${cv.coreSkills.join(', ')}\n\n`;
-  content += `Contact: \n`;
-  content += `  Email: ${cv.contact.email}\n`;
-  content += `  GitHub: ${cv.contact.github}\n`;
+  content += `Technical Skills:\n`;
+  Object.entries(cv.technicalSkills).forEach(([category, detail]) => {
+    content += `  ${category}: ${detail}\n`;
+  });
+  content += `\n`;
+
+  content += `Education:\n`;
+  cv.education.forEach(edu => {
+    content += `  ${edu.degree}\n`;
+    content += `  ${edu.institution}, ${edu.year}\n`;
+  });
+  content += `\n`;
+
+  content += `Certifications:\n`;
+  cv.certifications.forEach(cert => {
+    content += `  • ${cert}\n`;
+  });
+  content += `\n`;
+
+  content += `Contact:\n`;
+  content += `  Phone:    ${cv.contact.phone}\n`;
+  content += `  Email:    ${cv.contact.email}\n`;
+  content += `  GitHub:   ${cv.contact.github}\n`;
   content += `  LinkedIn: ${cv.contact.linkedin}\n`;
 
   return content;

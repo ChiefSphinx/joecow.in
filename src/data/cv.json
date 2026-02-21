@@ -1,43 +1,49 @@
 {
-  "name": "Joe Cowin",
+  "name": "Joseph Cowin",
   "title": "DevSecOps Engineer",
-  "about": "Passionate engineer with expertise in DevSecOps, cloud security, and infrastructure automation. Specializes in cloud technologies, security compliance, and building scalable cloud-native solutions.",
+  "summary": "DevSecOps Engineer with 7+ years of experience operating production systems at scale. Strong in incident response, Root Cause Analysis (RCA), and Service Level Agreement (SLA) management, with hands-on experience in Kubernetes (AKS), Terraform, and Azure DevOps & GitHub Actions CI/CD. Comfortable troubleshooting across APIs, containers, and event streaming (Confluent Kafka). Recent focus on Azure governance-as-code (Enterprise Policy-as-Code, EPAC), Wiz (CSPM/CNAPP), and posture visibility/remediation.",
+  "selectedAchievements": [
+    "Delivered a DevSecOps framework for an event-driven AI Player Promotions tool on AKS, enabling 60+ deployments/day at peak while sustaining 1,000+ events/sec.",
+    "Raised Azure Policy compliance by 5% across 600+ subscriptions via EPAC with pull request gates and pipelines; improved auditability and policy drift detection.",
+    "Cut lead time to on-premises production from weeks to days by automating Azure DevOps YAML pipelines with approvals and reusable templates; reduced change failure rate."
+  ],
   "experience": [
     {
       "company": "Derivco Málaga",
-      "location": "Málaga, Andalusia, Spain",
+      "location": "Málaga, Spain",
       "duration": "Full-time · 3 yrs 2 mos",
       "positions": [
         {
           "title": "Information Security Engineer",
-          "period": "Feb 2025 - Jul 2025 · 5 mos",
+          "period": "Feb 2025 – Jul 2025",
           "achievements": [
-            "Administered and enhanced Azure policy management, transitioning to Azure EPAC for improved compliance",
-            "Implemented AzGovViz for governance visualisation, strengthening control coverage and best practices",
-            "Drove the adoption of Wiz, enabling teams to proactively identify security risks earlier in the software lifecycle"
+            "Implemented EPAC (policy-as-code) with PR gates, pipelines, and reporting; increasing compliant resources across the tenant and improved auditability.",
+            "Deployed AzGovViz to visualise control coverage; accelerated identification and remediation of governance gaps.",
+            "Drove Wiz adoption and integrated findings into the SDLC; improved time-to-remediation and reduced repeat security issues.",
+            "Partnered across time zones; authored runbooks/Knowledge Base (KB) articles and aligned remediation SLAs with product teams."
           ],
-          "skills": ["Azure Policy", "Azure EPAC", "Wiz", "Governance", "Compliance"]
+          "skills": ["Azure Policy/Initiatives", "EPAC", "AzGovViz", "Wiz (CSPM/CNAPP)", "Azure DevOps"]
         },
         {
           "title": "Senior IT Engineer",
-          "period": "Feb 2024 - Jan 2025 · 1 yr",
+          "period": "Mar 2024 – Jan 2025",
           "achievements": [
-            "Led DevSecOps initiatives, collaborating with cross-functional teams to launch an AI promotions tool on Azure Kubernetes Service",
-            "Engineered secure Azure environments using Terraform, enhancing deployment efficiency through robust CI/CD pipelines",
-            "Implemented CNCF best practices, resulting in accelerated delivery of scalable cloud-native solutions",
-            "Proactively managed post-launch operations, resolving critical production issues to ensure optimal performance"
+            "Front-line production support: triage, deep-dive diagnosis, escalation, and post-incident RCAs; maintained contractual SLAs.",
+            "Automated CI/CD with Azure DevOps (YAML, templates, approvals/gates) to standardise releases; cut lead time to production and lowered change failure rate.",
+            "Defined containerisation standards with Docker/Kubernetes; improved resource utilisation and reduced deployment risk.",
+            "Authored post-mortems and preventative actions; decreased incident recurrence and MTTR."
           ],
-          "skills": ["DevSecOps", "Azure Kubernetes Service (AKS)", "Terraform", "CI/CD", "CNCF"]
+          "skills": ["AKS", "Docker", "Helm", "Azure DevOps", "Terraform", "Azure Monitor"]
         },
         {
           "title": "IT Engineer",
-          "period": "Jun 2022 - Feb 2024 · 1 yr 9 mos",
+          "period": "Jun 2022 – Mar 2024",
           "achievements": [
-            "Seeded and trained a new technical team, enhancing operational capabilities",
-            "Automated cloud infrastructure deployments using Terraform, significantly improving scalability and maintainability",
-            "Proactively monitored and resolved production incidents, ensuring minimal business disruption and high system uptime"
+            "Led DevSecOps launch of an AI Player Promotions tool on AKS; built secure landing zones with Terraform and integrated observability.",
+            "On-call for critical services; resolved priority incidents affecting customer experience; coordinated across dev, SRE, and platform teams.",
+            "Applied CNCF best practices to enhance scalability and stability; reduced operational toil via automation and templated workflows."
           ],
-          "skills": ["Terraform", "Observability", "Team Leadership", "Infrastructure Automation"]
+          "skills": ["AKS", "Terraform", "Confluent Platform/Cloud (Kafka)", "Dapr", "Argo"]
         }
       ]
     },
@@ -48,40 +54,49 @@
       "positions": [
         {
           "title": "IT Engineer",
-          "period": "May 2021 - Jun 2022 · 1 yr 2 mos",
+          "period": "May 2021 – Jun 2022",
           "achievements": [
-            "Collaborated on internal projects to modernise business infrastructure, enhancing overall efficiency",
-            "Implemented Azure cloud technologies, resulting in improved operational workflows",
-            "Developed custom Helm charts for Kubernetes deployments, simplifying application configurations",
-            "Created CI/CD pipelines that automated deployment processes, significantly increasing release frequency"
+            "Modernised internal platforms with Azure services; delivered custom Helm charts to standardise Kubernetes deployments.",
+            "Built CI/CD pipelines that increased release frequency and consistency; improved change success rate.",
+            "Provided live systems support for internal customers; created scripts/tools to streamline operations."
           ],
-          "skills": ["Microsoft Azure", "Azure DevOps", "Helm", "Kubernetes", "CI/CD"]
+          "skills": ["Azure", "Helm", "Kubernetes", "Azure DevOps", "PowerShell", "Python"]
         },
         {
           "title": "IT Apprentice",
-          "period": "Sep 2018 - May 2021 · 2 yrs 9 mos",
+          "period": "Sep 2018 – May 2021",
           "achievements": [
-            "Provided live systems support across multiple teams, enhancing operational efficiency",
-            "Collaborated with internal teams to improve player experience and streamline processes",
-            "Developed internal tools and scripts, laying a strong foundation for operations"
+            "Supported production systems across multiple teams; handled ticket triage, incident communications, and follow-ups.",
+            "Built internal tools and scripts, contributing to faster issue resolution and better team efficiency."
           ],
-          "skills": ["Technical Support", "Customer Support", "Scripting", "Operations"]
+          "skills": ["Technical Support", "Scripting", "Operations"]
         }
       ]
     }
   ],
-  "coreSkills": [
-    "Azure",
-    "DevSecOps",
-    "Terraform",
-    "Kubernetes",
-    "Security Compliance",
-    "CI/CD",
-    "Infrastructure as Code",
-    "Observability",
-    "Technical Leadership"
+  "technicalSkills": {
+    "Cloud": "Azure (Policy/Initiatives, RBAC, Key Vault, DevOps, Monitor, Log Analytics)",
+    "Containers/Kubernetes": "AKS, Docker, Helm; rollouts/rollbacks; ingress/networking; day-0, day-1, and day-2 operations",
+    "CI/CD & IaC": "Azure DevOps & GitHub Actions (YAML, templates, approvals/gates), Terraform (remote state, drift detection)",
+    "Security & Governance": "EPAC (policy-as-code), AzGovViz, Wiz (CSPM/CNAPP), RBAC",
+    "Observability & Reliability": "OpenTelemetry, Elastic & Prometheus (logging/metrics/tracing), incident response, SLAs, RCA, KCS-aligned runbooks/KBs",
+    "Streaming & Messaging": "Confluent Platform/Cloud (Kafka); topics/partitions/retention; consumer-lag/throughput diagnostics",
+    "APIs & Integration": "REST/JSON, OpenAPI, OAuth 2.0/JWT; Postman, curl",
+    "Scripting": "Bash, PowerShell, Python"
+  },
+  "education": [
+    {
+      "degree": "BSc (Hons) Cybersecurity, First Class Honours",
+      "institution": "University College Isle of Man (Associate College of the University of Chester)",
+      "year": "2021"
+    }
+  ],
+  "certifications": [
+    "Microsoft Certified: Azure Fundamentals (AZ-900)",
+    "HashiCorp Terraform Associate"
   ],
   "contact": {
+    "phone": "+44 7990 753776",
     "email": "JosephCowin@proton.me",
     "github": "https://github.com/ChiefSphinx/joecow.in",
     "linkedin": "https://www.linkedin.com/in/joe-cowin/"
