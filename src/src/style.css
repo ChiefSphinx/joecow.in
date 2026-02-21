@@ -34,17 +34,22 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 #app {
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   box-sizing: border-box;
 }
 
 /* Terminal Window */
 .terminal-window {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: var(--bg-terminal);
@@ -457,11 +462,19 @@ a:hover {
 
 /* Mobile Input - Inline overlay on command-line */
 @media (max-width: 768px) {
+  html, body {
+    position: fixed;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+
   .terminal-input-line {
     position: relative;
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .mobile-input {
@@ -490,6 +503,7 @@ a:hover {
     -webkit-tap-highlight-color: transparent;
     -webkit-appearance: none;
     appearance: none;
+    transform: translateZ(0);
   }
 
   .mobile-input:focus {
@@ -498,6 +512,7 @@ a:hover {
     background: transparent;
     outline: none;
     box-shadow: none;
+    transform: translateZ(0);
   }
 
   .mobile-input::placeholder {
@@ -507,6 +522,7 @@ a:hover {
   .terminal-body {
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .terminal-header {
@@ -515,6 +531,7 @@ a:hover {
 
   .terminal-window {
     padding-top: env(safe-area-inset-top, 0px);
+    height: 100%;
   }
 
   .prompt {
