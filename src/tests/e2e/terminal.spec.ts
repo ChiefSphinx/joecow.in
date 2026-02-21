@@ -11,7 +11,7 @@ test('loads and shows welcome, prompt, and can run basic commands', async ({ pag
 
   await page.keyboard.type('cv')
   await page.keyboard.press('Enter')
-  await expect(page.getByText('Name: Joe Cowin')).toBeVisible()
+  await expect(page.getByText('Joseph Cowin — DevSecOps Engineer')).toBeVisible()
 
   await page.keyboard.type('clear')
   await page.keyboard.press('Enter')
