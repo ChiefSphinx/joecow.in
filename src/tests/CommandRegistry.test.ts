@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CommandRegistry, createDefaultCommands, createCommandRegistry } from '../src/CommandRegistry'
-import type { CommandContext, TerminalUIInterface, ThemeManagerInterface, SnakeIntegrationInterface } from '../src/types'
+import type { CommandContext, TerminalUIInterface, ThemeManagerInterface, SnakeIntegrationInterface, CommandRegistryInterface } from '../src/types'
 
 function createMockUI(): TerminalUIInterface {
   return {
@@ -36,6 +36,22 @@ function createMockSnakeIntegration(): SnakeIntegrationInterface {
     startSnakeGame: vi.fn().mockResolvedValue(undefined),
     isActive: vi.fn().mockReturnValue(false),
     destroy: vi.fn(),
+  }
+}
+
+function createMockCommandRegistry(): CommandRegistryInterface {
+  return {
+    generateHelpText: vi.fn().mockReturnValue('\nAvailable commands:\n  help  - Show available commands\n'),
+  }
+}
+
+function createContext(overrides: Partial<CommandContext> = {}): CommandContext {
+  return {
+    terminalUI: createMockUI(),
+    themeManager: createMockThemeManager(),
+    snakeIntegration: createMockSnakeIntegration(),
+    commandRegistry: createMockCommandRegistry(),
+    ...overrides,
   }
 }
 
@@ -104,6 +120,14 @@ describe('CommandRegistry', () => {
     expect(helpText).toContain('Show help')
   })
 
+  it('excludes hidden commands from help text', () => {
+    registry.register({ name: 'visible', description: 'Shown', execute: vi.fn() })
+    registry.register({ name: 'secret', description: 'Hidden', hidden: true, execute: vi.fn() })
+    const helpText = registry.generateHelpText()
+    expect(helpText).toContain('visible')
+    expect(helpText).not.toContain('secret')
+  })
+
   it('executes commands', async () => {
     const execute = vi.fn().mockResolvedValue(undefined)
     const command = {
@@ -112,23 +136,14 @@ describe('CommandRegistry', () => {
       execute,
     }
     registry.register(command)
-    const context: CommandContext = {
-      terminalUI: createMockUI(),
-      themeManager: createMockThemeManager(),
-      snakeIntegration: createMockSnakeIntegration(),
-    }
+    const context = createContext()
     const result = await registry.execute('test', context, '')
     expect(result).toBe(true)
     expect(execute).toHaveBeenCalledWith(context, '')
   })
 
   it('returns false for unknown command execution', async () => {
-    const context: CommandContext = {
-      terminalUI: createMockUI(),
-      themeManager: createMockThemeManager(),
-      snakeIntegration: createMockSnakeIntegration(),
-    }
-    const result = await registry.execute('unknown', context, '')
+    const result = await registry.execute('unknown', createContext(), '')
     expect(result).toBe(false)
   })
 })
@@ -148,6 +163,14 @@ describe('createDefaultCommands', () => {
     expect(names).toContain('exit')
     expect(names).toContain('sudo')
     expect(names).toContain('rm')
+  })
+
+  it('marks easter egg commands as hidden', () => {
+    const commands = createDefaultCommands()
+    const byName = Object.fromEntries(commands.map(c => [c.name, c]))
+    expect(byName['exit'].hidden).toBe(true)
+    expect(byName['sudo'].hidden).toBe(true)
+    expect(byName['rm'].hidden).toBe(true)
   })
 })
 
@@ -170,28 +193,38 @@ describe('createCommandRegistry', () => {
     expect(registry.has('rm -rf')).toBe(true)
   })
 
+  it('help text only contains non-hidden commands', () => {
+    const registry = createCommandRegistry()
+    const helpText = registry.generateHelpText()
+    expect(helpText).toContain('help')
+    expect(helpText).toContain('cv')
+    expect(helpText).toContain('snake')
+    // Check descriptions to avoid substring collisions (e.g. 'rm' in 'terminal')
+    expect(helpText).not.toContain('Exit the terminal')
+    expect(helpText).not.toContain('Try to gain root access')
+    expect(helpText).not.toContain('Remove files')
+  })
+
   it('clear command clears output', async () => {
     const registry = createCommandRegistry()
     const mockUI = createMockUI()
-    const context: CommandContext = {
-      terminalUI: mockUI,
-      themeManager: createMockThemeManager(),
-      snakeIntegration: createMockSnakeIntegration(),
-    }
-    await registry.execute('clear', context, '')
+    await registry.execute('clear', createContext({ terminalUI: mockUI }), '')
     expect(mockUI.clearOutput).toHaveBeenCalled()
   })
 
   it('theme command toggles theme', async () => {
     const registry = createCommandRegistry()
-    const mockUI = createMockUI()
     const mockTheme = createMockThemeManager()
-    const context: CommandContext = {
-      terminalUI: mockUI,
-      themeManager: mockTheme,
-      snakeIntegration: createMockSnakeIntegration(),
-    }
-    await registry.execute('theme', context, '')
+    await registry.execute('theme', createContext({ themeManager: mockTheme }), '')
     expect(mockTheme.toggleTheme).toHaveBeenCalled()
+  })
+
+  it('help command uses commandRegistry.generateHelpText', async () => {
+    const registry = createCommandRegistry()
+    const mockUI = createMockUI()
+    const mockCommandRegistry = createMockCommandRegistry()
+    await registry.execute('help', createContext({ terminalUI: mockUI, commandRegistry: mockCommandRegistry }), '')
+    expect(mockCommandRegistry.generateHelpText).toHaveBeenCalled()
+    expect(mockUI.typeText).toHaveBeenCalled()
   })
 })

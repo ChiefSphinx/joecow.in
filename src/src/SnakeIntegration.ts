@@ -30,7 +30,7 @@ export class SnakeIntegration implements SnakeIntegrationInterface {
     const instructions = isMobile
       ? '\nStarting Snake Game...\nUse the on-screen controls to play. Tap EXIT to quit.\n\n'
       : '\nStarting Snake Game...\nUse arrow keys to control the snake. Press ESC to exit.\n\n'
-    await terminalUI.typeText(instructions, 0)
+    await terminalUI.typeText(instructions)
 
     const snakeDiv = document.createElement('div')
     snakeDiv.className = 'snake-terminal-container'

@@ -450,7 +450,7 @@ a:hover {
   font-size: 1.2em;
 }
 
-/* Mobile Input - Hidden text input for keyboard support */
+/* Mobile Input - Hidden text input for keyboard support (desktop) */
 .mobile-input {
   position: absolute;
   left: 0;
@@ -461,91 +461,9 @@ a:hover {
   pointer-events: none;
 }
 
-/* Mobile Input - Inline overlay on command-line */
-@media (max-width: 768px) {
-  html, body {
-    position: fixed;
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-  }
-
-  .terminal-input-line {
-    position: relative;
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
-  .mobile-input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    min-height: 28px;
-    padding: 0;
-    margin: 0;
-    background: transparent;
-    border: none;
-    color: transparent;
-    caret-color: transparent;
-    font-family: 'Fira Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 16px;
-    pointer-events: auto;
-    z-index: 10;
-    box-sizing: border-box;
-    outline: none;
-    border-radius: 0;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-appearance: none;
-    appearance: none;
-    transform: translateZ(0);
-  }
-
-  .mobile-input:focus {
-    opacity: 0;
-    color: transparent;
-    background: transparent;
-    outline: none;
-    box-shadow: none;
-    transform: translateZ(0);
-  }
-
-  .mobile-input::placeholder {
-    color: transparent;
-  }
-
-  .terminal-body {
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .terminal-header {
-    padding-top: calc(8px + env(safe-area-inset-top, 0px));
-  }
-
-  .terminal-window {
-    padding-top: env(safe-area-inset-top, 0px);
-    height: 100%;
-  }
-
-  .prompt {
-    pointer-events: none;
-    z-index: 5;
-    position: relative;
-  }
-
-  .command-line {
-    pointer-events: none;
-    z-index: 5;
-    position: relative;
-    flex: 1;
-  }
+/* Snake canvas needs a minimum height on desktop so the canvas isn't collapsed */
+.snake-terminal-container {
+  min-height: 300px;
 }
 
 /* Snake Mobile Controls */
@@ -627,7 +545,83 @@ a:hover {
 
 /* Mobile Styles */
 @media (max-width: 768px) {
-  /* Larger tap targets for terminal buttons */
+  html,
+  body {
+    position: fixed;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* Input line becomes a flex row so the invisible overlay sits on top */
+  .terminal-input-line {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Invisible full-coverage input captures the native keyboard */
+  .mobile-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 28px;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    color: transparent;
+    caret-color: transparent;
+    font-family: 'Fira Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 16px; /* >= 16px prevents iOS auto-zoom on focus */
+    pointer-events: auto;
+    z-index: 10;
+    box-sizing: border-box;
+    outline: none;
+    border-radius: 0;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    transform: translateZ(0);
+  }
+
+  .mobile-input:focus {
+    opacity: 0;
+    color: transparent;
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+    transform: translateZ(0);
+  }
+
+  .mobile-input::placeholder {
+    color: transparent;
+  }
+
+  .terminal-window {
+    height: 100%;
+  }
+
+  .terminal-header {
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  }
+
+  .terminal-body {
+    padding: 12px;
+    font-size: 14px;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Larger tap targets for traffic-light buttons */
   .terminal-button {
     width: 28px;
     height: 28px;
@@ -649,17 +643,11 @@ a:hover {
     gap: 16px;
   }
 
-  .terminal-header {
-    padding: 12px 16px;
-    padding-top: calc(12px + env(safe-area-inset-top, 0px));
-  }
-
   .theme-toggle {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Hide terminal title on very small screens */
   .terminal-title {
     font-size: 12px;
     overflow: hidden;
@@ -668,19 +656,19 @@ a:hover {
     max-width: 50%;
   }
 
-  /* Adjust terminal body padding */
-  .terminal-body {
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  /* Make prompt shorter on mobile */
   .prompt {
     font-size: 14px;
+    pointer-events: none;
+    z-index: 5;
+    position: relative;
   }
 
   .command-line {
     font-size: 14px;
+    pointer-events: none;
+    z-index: 5;
+    position: relative;
+    flex: 1;
   }
 
   .output-line {
@@ -688,7 +676,7 @@ a:hover {
     line-height: 1.5;
   }
 
-  /* Show snake mobile controls - positioned in flow below canvas */
+  /* Show snake mobile controls below the canvas */
   .snake-mobile-controls {
     display: flex;
     flex-direction: column;
@@ -697,13 +685,12 @@ a:hover {
     margin-top: 8px;
   }
 
-  /* Adjust snake container for mobile */
   .snake-terminal-container {
     height: 200px !important;
     min-height: 150px;
   }
 
-  /* BSOD adjustments for mobile */
+  /* BSOD */
   .bsod-content {
     padding: 20px;
     max-width: 90%;
@@ -722,7 +709,7 @@ a:hover {
     font-size: 14px;
   }
 
-  /* Desktop mode adjustments */
+  /* Desktop / minimize view */
   .desktop-icons {
     top: 20px;
     left: 20px;

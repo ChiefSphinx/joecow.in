@@ -6,6 +6,7 @@ import type {
   ThemeManagerInterface,
   SnakeIntegrationInterface,
 } from './types'
+import { UI } from './types'
 import { CommandRegistry } from './CommandRegistry'
 
 export class InputHandler implements InputHandlerInterface {
@@ -14,7 +15,6 @@ export class InputHandler implements InputHandlerInterface {
   private themeManager: ThemeManagerInterface
   private snakeIntegration: SnakeIntegrationInterface
   private keydownHandler: (e: KeyboardEvent) => void
-  private snakeActive = false
   private history: HistoryState = {
     commandHistory: [],
     historyIndex: -1,
@@ -25,6 +25,7 @@ export class InputHandler implements InputHandlerInterface {
     lastTabInput: '',
   }
   private keyboardResizeHandler: (() => void) | null = null
+  private cleanupFns: Array<() => void> = []
 
   constructor(
     terminalUI: TerminalUIInterface,
@@ -43,18 +44,24 @@ export class InputHandler implements InputHandlerInterface {
   }
 
   private setupMobileInput(): void {
-    const terminalBody = document.querySelector('.terminal-body') as HTMLDivElement | null
-    if (terminalBody) {
-      terminalBody.addEventListener('click', () => {
-        if (!this.snakeIntegration.isActive() && !this.terminalUI.isTyping()) {
-          this.terminalUI.getMobileInput().focus()
-        }
-      })
+    // Use event delegation on document so the listener survives a terminal:restart
+    // (which replaces the terminal-body DOM node entirely).
+    const clickHandler = (e: Event) => {
+      const target = e.target as Element
+      if (
+        target.closest('.terminal-body') &&
+        !this.snakeIntegration.isActive() &&
+        !this.terminalUI.isTyping()
+      ) {
+        this.terminalUI.getMobileInput().focus()
+      }
     }
+    document.addEventListener('click', clickHandler)
+    this.cleanupFns.push(() => document.removeEventListener('click', clickHandler))
 
     const mobileInput = this.terminalUI.getMobileInput()
     mobileInput.addEventListener('input', () => {
-      if (this.snakeActive || this.terminalUI.isTyping()) return
+      if (this.snakeIntegration.isActive() || this.terminalUI.isTyping()) return
 
       const commandLine = this.terminalUI.getCommandLine()
       let textNode = commandLine.firstChild
@@ -63,11 +70,11 @@ export class InputHandler implements InputHandlerInterface {
         commandLine.insertBefore(textNode, this.terminalUI.getCursor())
       }
       textNode.textContent = mobileInput.value
-      this.terminalUI.scrollToBottom(false)
+      this.terminalUI.scrollToBottom()
     })
 
     mobileInput.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && !this.snakeActive && !this.terminalUI.isTyping()) {
+      if (e.key === 'Enter' && !this.snakeIntegration.isActive() && !this.terminalUI.isTyping()) {
         e.preventDefault()
         e.stopPropagation()
         const commandLine = this.terminalUI.getCommandLine()
@@ -82,7 +89,7 @@ export class InputHandler implements InputHandlerInterface {
 
     mobileInput.addEventListener('focus', () => {
       requestAnimationFrame(() => {
-        this.terminalUI.scrollToBottom(false)
+        this.terminalUI.scrollToBottom()
       })
     })
 
@@ -95,16 +102,41 @@ export class InputHandler implements InputHandlerInterface {
     })
   }
 
-  setSnakeActive(active: boolean): void {
-    this.snakeActive = active
-  }
-
-  isSnakeActive(): boolean {
-    return this.snakeActive
-  }
-
   private handleKeydown(e: KeyboardEvent): void {
-    if (this.snakeActive) {
+    // Global Ctrl shortcuts work regardless of snake / typing state
+    if (e.ctrlKey) {
+      if (e.key === 'l') {
+        e.preventDefault()
+        this.terminalUI.clearOutput()
+        this.terminalUI.scrollToBottom()
+        return
+      }
+      if (e.key === 'c') {
+        e.preventDefault()
+        const commandLine = this.terminalUI.getCommandLine()
+        const textNode = commandLine.firstChild
+        const currentText =
+          textNode && textNode.nodeType === Node.TEXT_NODE ? textNode.textContent || '' : ''
+        if (currentText) {
+          this.terminalUI.addToOutput(`${UI.PROMPT}${currentText}^C`)
+        }
+        if (textNode && textNode.nodeType === Node.TEXT_NODE) textNode.textContent = ''
+        this.terminalUI.getMobileInput().value = ''
+        this.resetTabCompletion()
+        return
+      }
+      if (e.key === 'u') {
+        e.preventDefault()
+        const commandLine = this.terminalUI.getCommandLine()
+        const textNode = commandLine.firstChild
+        if (textNode && textNode.nodeType === Node.TEXT_NODE) textNode.textContent = ''
+        this.terminalUI.getMobileInput().value = ''
+        this.resetTabCompletion()
+        return
+      }
+    }
+
+    if (this.snakeIntegration.isActive()) {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault()
       }
@@ -130,27 +162,27 @@ export class InputHandler implements InputHandlerInterface {
       textNode.textContent = text.slice(0, -1)
       this.terminalUI.getMobileInput().value = text.slice(0, -1)
       this.resetTabCompletion()
-      this.terminalUI.scrollToBottom(false)
+      this.terminalUI.scrollToBottom()
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       this.navigateHistory(-1, textNode as Text)
       this.terminalUI.getMobileInput().value = textNode.textContent || ''
-      this.terminalUI.scrollToBottom(false)
+      this.terminalUI.scrollToBottom()
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
       this.navigateHistory(1, textNode as Text)
       this.terminalUI.getMobileInput().value = textNode.textContent || ''
-      this.terminalUI.scrollToBottom(false)
+      this.terminalUI.scrollToBottom()
     } else if (e.key === 'Tab') {
       e.preventDefault()
       this.handleTabCompletion(textNode as Text)
-      this.terminalUI.scrollToBottom(false)
+      this.terminalUI.scrollToBottom()
     } else if (e.key.length === 1) {
       if (document.activeElement === this.terminalUI.getMobileInput()) return
       textNode.textContent = text + e.key
       this.terminalUI.getMobileInput().value = text + e.key
       this.resetTabCompletion()
-      this.terminalUI.scrollToBottom(false)
+      this.terminalUI.scrollToBottom()
     }
   }
 
@@ -164,7 +196,7 @@ export class InputHandler implements InputHandlerInterface {
     this.history.historyIndex = -1
     this.history.currentInput = ''
 
-    this.terminalUI.addToOutput(`joe@joecow.in:~$ ${command}`)
+    this.terminalUI.addToOutput(`${UI.PROMPT}${command}`)
 
     const commandLine = this.terminalUI.getCommandLine()
     if (commandLine.firstChild && commandLine.firstChild.nodeType === Node.TEXT_NODE) {
@@ -177,15 +209,16 @@ export class InputHandler implements InputHandlerInterface {
         terminalUI: this.terminalUI,
         themeManager: this.themeManager,
         snakeIntegration: this.snakeIntegration,
+        commandRegistry: this.commandRegistry,
       },
       ''
     )
 
     if (!executed && cmd !== '') {
       if (cmd.startsWith('sudo ')) {
-        await this.terminalUI.typeText('Nice try! ;)\n', 0)
+        await this.terminalUI.typeText('Nice try! ;)\n')
       } else {
-        await this.terminalUI.typeText(`Command not found: ${command}\n`, 0)
+        await this.terminalUI.typeText(`Command not found: ${command}\n`)
       }
     }
 
@@ -226,22 +259,31 @@ export class InputHandler implements InputHandlerInterface {
     const input = textNode.textContent || ''
     const inputLower = input.toLowerCase()
 
-    if (
-      this.tabCompletion.lastTabInput &&
-      !inputLower.startsWith(this.tabCompletion.lastTabInput)
-    ) {
-      this.resetTabCompletion()
-    }
-
     const commands = this.commandRegistry.getAllCommandNamesWithAliases()
     const matches = commands.filter(cmd => cmd.toLowerCase().startsWith(inputLower))
 
     if (matches.length === 0) return
 
+    if (matches.length === 1) {
+      // Single match — complete immediately and reset
+      textNode.textContent = matches[0]
+      this.terminalUI.getMobileInput().value = matches[0]
+      this.resetTabCompletion()
+      return
+    }
+
+    // Multiple matches — show list on first Tab, then cycle on subsequent Tabs
     if (this.tabCompletion.tabCompletionIndex === -1) {
       this.tabCompletion.lastTabInput = inputLower
       this.tabCompletion.tabCompletionIndex = 0
+      // Echo the current line and show available completions
+      this.terminalUI.addToOutput(`${UI.PROMPT}${input}`)
+      this.terminalUI.addToOutput(matches.join('   '))
     } else {
+      if (!inputLower.startsWith(this.tabCompletion.lastTabInput)) {
+        this.resetTabCompletion()
+        return
+      }
       this.tabCompletion.tabCompletionIndex =
         (this.tabCompletion.tabCompletionIndex + 1) % matches.length
     }
@@ -251,6 +293,8 @@ export class InputHandler implements InputHandlerInterface {
   }
 
   destroy(): void {
+    for (const fn of this.cleanupFns) fn()
+    this.cleanupFns = []
     document.removeEventListener('keydown', this.keydownHandler)
     if (this.keyboardResizeHandler && window.visualViewport) {
       window.visualViewport.removeEventListener('resize', this.keyboardResizeHandler)
@@ -288,7 +332,7 @@ export class InputHandler implements InputHandlerInterface {
         // Double rAF ensures the browser has finished reflowing before we scroll
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            this.terminalUI.scrollToBottom(false)
+            this.terminalUI.scrollToBottom()
           })
         })
       }

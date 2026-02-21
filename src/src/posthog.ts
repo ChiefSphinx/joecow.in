@@ -4,7 +4,7 @@ let posthogInstance: PostHogInstance | null = null
 let isLoading = false
 let isInitialized = false
 
-const initPostHog = async () => {
+const initPostHog = async (): Promise<void> => {
   if (isInitialized || isLoading) return
   isLoading = true
 

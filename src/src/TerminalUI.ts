@@ -44,7 +44,7 @@ export class TerminalUI implements TerminalUIInterface {
           ${this.themeManager.getButtonHTML()}
         </div>
         <div class="terminal-body">
-          <div class="terminal-output" id="terminal-output"></div>
+          <div class="terminal-output" id="terminal-output" aria-live="polite" aria-label="Terminal output"></div>
           <div class="terminal-input-line" id="terminal-input-line">
             <span class="prompt">${UI.PROMPT}</span>
             <span class="command-line" id="command-line"><span class="cursor" id="cursor">█</span></span>
@@ -144,29 +144,33 @@ export class TerminalUI implements TerminalUIInterface {
     }
   }
 
+  // Escape HTML and wrap URLs/emails in anchor tags for safe, clickable output
+  private linkify(text: string): string {
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+    return escaped.replace(
+      /(https?:\/\/\S+|mailto:\S+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+    )
+  }
+
   addToOutput(text: string): void {
     const line = document.createElement('div')
     line.className = 'output-line'
-    line.textContent = text
+    line.innerHTML = this.linkify(text)
     this.outputContainer.appendChild(line)
     this.scrollToBottom()
   }
 
-  async typeText(text: string, speed: number = 0): Promise<void> {
+  async typeText(text: string): Promise<void> {
     this.setIsTyping(true)
     const line = document.createElement('div')
     line.className = 'output-line'
+    line.innerHTML = this.linkify(text)
     this.outputContainer.appendChild(line)
-
-    if (speed === 0) {
-      line.textContent = text
-    } else {
-      for (let i = 0; i < text.length; i++) {
-        line.textContent += text[i]
-        await this.sleep(speed)
-      }
-    }
-
     this.scrollToBottom()
     this.setIsTyping(false)
   }
@@ -175,7 +179,7 @@ export class TerminalUI implements TerminalUIInterface {
     this.outputContainer.innerHTML = ''
   }
 
-  scrollToBottom(_smooth: boolean = true): void {
+  scrollToBottom(): void {
     requestAnimationFrame(() => {
       const terminalBody = this.container.querySelector<HTMLDivElement>('.terminal-body')
       if (!terminalBody) return
@@ -303,12 +307,10 @@ export class TerminalUI implements TerminalUIInterface {
     }, TIMING.MAXIMIZE_ANIMATION)
   }
 
+  // Dispatch a custom event so main.ts can do a full clean reinitialisation.
+  // This avoids leaving InputHandler's mobileInput listeners pointing at
+  // stale DOM elements after the terminal body is replaced.
   restartTerminal(): void {
-    this.destroy()
-    this.setupTerminal()
-  }
-
-  private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    document.dispatchEvent(new CustomEvent('terminal:restart'))
   }
 }

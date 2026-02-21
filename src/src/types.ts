@@ -1,5 +1,4 @@
 export const TIMING = {
-  POSTHOG_DELAY: 100,
   BSOD_INTERVAL: 500,
   BSOD_RESTART_DELAY: 2000,
   MINIMIZE_ANIMATION: 300,
@@ -19,24 +18,30 @@ export const UI = {
 
 export type Theme = 'light' | 'dark'
 
+export interface CommandRegistryInterface {
+  generateHelpText(): string
+}
+
 export interface CommandContext {
   terminalUI: TerminalUIInterface
   themeManager: ThemeManagerInterface
   snakeIntegration: SnakeIntegrationInterface
+  commandRegistry: CommandRegistryInterface
 }
 
 export interface Command {
   name: string
   description: string
   aliases?: string[]
+  hidden?: boolean
   execute: (context: CommandContext, args: string) => Promise<void> | void
 }
 
 export interface TerminalUIInterface {
   addToOutput(text: string): void
-  typeText(text: string, speed?: number): Promise<void>
+  typeText(text: string): Promise<void>
   clearOutput(): void
-  scrollToBottom(smooth?: boolean): void
+  scrollToBottom(): void
   showPrompt(): void
   showBSOD(): void
   minimizeTerminal(): void
@@ -65,7 +70,6 @@ export interface SnakeIntegrationInterface {
 
 export interface InputHandlerInterface {
   destroy(): void
-  isSnakeActive(): boolean
 }
 
 export interface HistoryState {

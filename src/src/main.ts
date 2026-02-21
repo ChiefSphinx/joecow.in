@@ -6,7 +6,7 @@ import { InputHandler } from './InputHandler'
 import { SnakeIntegration } from './SnakeIntegration'
 import { createCommandRegistry } from './CommandRegistry'
 import { getWelcomeMessages } from './utils/content-loader'
-import { TIMING } from './types'
+import { UI } from './types'
 
 declare global {
   interface Window {
@@ -14,15 +14,9 @@ declare global {
   }
 }
 
-const MOBILE_BREAKPOINT = 480
-
 function isMobileViewport(): boolean {
-  return window.innerWidth < MOBILE_BREAKPOINT
+  return window.innerWidth < UI.MOBILE_BREAKPOINT
 }
-
-setTimeout(() => {
-  initPostHog()
-}, TIMING.POSTHOG_DELAY)
 
 class Terminal {
   private container: HTMLDivElement
@@ -57,14 +51,14 @@ class Terminal {
   private async startTerminal(): Promise<void> {
     const welcome = getWelcomeMessages(isMobileViewport())
     if (welcome.asciiArt && welcome.asciiArt.length > 0) {
-      await this.terminalUI.typeText('\n', 0)
+      await this.terminalUI.typeText('\n')
       for (const line of welcome.asciiArt) {
-        await this.terminalUI.typeText(line + '\n', 0)
+        await this.terminalUI.typeText(line + '\n')
       }
-      await this.terminalUI.typeText('\n', 0)
+      await this.terminalUI.typeText('\n')
     }
-    await this.terminalUI.typeText(`${welcome.greeting}\n`, 0)
-    await this.terminalUI.typeText(`${welcome.instruction}\n\n`, 0)
+    await this.terminalUI.typeText(`${welcome.greeting}\n`)
+    await this.terminalUI.typeText(`${welcome.instruction}\n\n`)
     this.terminalUI.showPrompt()
   }
 
@@ -75,9 +69,6 @@ class Terminal {
   }
 }
 
-initPostHog()
-trackPageView('Terminal Home')
-
 let terminalInstance: Terminal | null = null
 
 function initTerminal(): void {
@@ -87,6 +78,13 @@ function initTerminal(): void {
   terminalInstance = new Terminal()
   trackTerminalSession('start')
 }
+
+// Full reinitialisation triggered by BSOD / restartTerminal().
+// Using a custom event keeps TerminalUI decoupled from main.ts.
+document.addEventListener('terminal:restart', initTerminal)
+
+// Initialise PostHog, then track the page view once the library has loaded.
+initPostHog().then(() => trackPageView('Terminal Home'))
 
 initTerminal()
 

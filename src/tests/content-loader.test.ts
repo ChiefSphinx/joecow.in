@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatCV, formatFiles, formatHelp, getWelcomeMessages, getCVData, getTerminalContent } from '../src/utils/content-loader'
+import { formatCV, formatFiles, getWelcomeMessages, getCVData, getTerminalContent } from '../src/utils/content-loader'
 
 describe('content data', () => {
   it('cv.json has required fields', () => {
@@ -10,10 +10,9 @@ describe('content data', () => {
     expect(Array.isArray(cv.experience)).toBe(true)
   })
 
-  it('terminal-content.json has welcome/help/files', () => {
+  it('terminal-content.json has welcome and files', () => {
     const terminal = getTerminalContent()
     expect(terminal).toHaveProperty('welcome')
-    expect(terminal).toHaveProperty('help')
     expect(terminal).toHaveProperty('files')
   })
 
@@ -35,12 +34,11 @@ describe('content-loader formatting', () => {
     expect(s).toContain(cv.title)
   })
 
-  it('formatHelp includes Available commands title and a command', () => {
-    const terminal = getTerminalContent()
-    const s = formatHelp()
-    expect(s).toContain(terminal.help.title)
-    const firstCmd = terminal.help.commands[0].command
-    expect(s).toContain(firstCmd)
+  it('formatCV includes contact URLs', () => {
+    const cv = getCVData()
+    const s = formatCV()
+    expect(s).toContain(cv.contact.github)
+    expect(s).toContain(cv.contact.linkedin)
   })
 
   it('formatFiles lists files lines', () => {
@@ -89,4 +87,3 @@ describe('content-loader formatting', () => {
     }
   })
 })
-

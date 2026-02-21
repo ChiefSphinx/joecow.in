@@ -1,5 +1,6 @@
 import type { Command, CommandContext } from './types'
-import { formatCV, formatHelp, formatFiles } from './utils/content-loader'
+import { UI } from './types'
+import { formatCV, formatFiles } from './utils/content-loader'
 import { trackCommandUsage } from './posthog'
 
 export class CommandRegistry {
@@ -54,7 +55,7 @@ export class CommandRegistry {
   }
 
   generateHelpText(): string {
-    const commands = this.getAllCommands()
+    const commands = this.getAllCommands().filter(cmd => !cmd.hidden)
     let content = '\nAvailable commands:\n'
     for (const cmd of commands) {
       const padding = ' '.repeat(Math.max(2, 14 - cmd.name.length))
@@ -70,8 +71,7 @@ export function createDefaultCommands(): Command[] {
       name: 'help',
       description: 'Show available commands',
       execute: async context => {
-        const helpText = formatHelp()
-        await context.terminalUI.typeText(helpText, 0)
+        await context.terminalUI.typeText(context.commandRegistry.generateHelpText())
       },
     },
     {
@@ -80,20 +80,21 @@ export function createDefaultCommands(): Command[] {
       aliases: ['cat cv.txt'],
       execute: async context => {
         const cvContent = formatCV()
-        await context.terminalUI.typeText(cvContent, 0)
+        await context.terminalUI.typeText(cvContent)
       },
     },
     {
       name: 'cat readme.md',
       description: 'Display README file',
+      hidden: true,
       execute: async context => {
         try {
           const res = await fetch('/README.md', { cache: 'no-cache' })
           if (!res.ok) throw new Error('Failed to load README')
           const text = await res.text()
-          await context.terminalUI.typeText(`\n${text}\n`, 0)
+          await context.terminalUI.typeText(`\n${text}\n`)
         } catch {
-          await context.terminalUI.typeText('\nError: Unable to load README.md\n', 0)
+          await context.terminalUI.typeText('\nError: Unable to load README.md\n')
         }
       },
     },
@@ -109,21 +110,21 @@ export function createDefaultCommands(): Command[] {
       description: 'List files',
       execute: async context => {
         const files = formatFiles()
-        await context.terminalUI.typeText(files, 0)
+        await context.terminalUI.typeText(files)
       },
     },
     {
       name: 'whoami',
       description: 'Display current user',
       execute: async context => {
-        await context.terminalUI.typeText('joe\n', 0)
+        await context.terminalUI.typeText('joe\n')
       },
     },
     {
       name: 'date',
       description: 'Display current date and time',
       execute: async context => {
-        await context.terminalUI.typeText(new Date().toLocaleString() + '\n', 0)
+        await context.terminalUI.typeText(new Date().toLocaleString() + '\n')
       },
     },
     {
@@ -132,8 +133,7 @@ export function createDefaultCommands(): Command[] {
       execute: async context => {
         context.themeManager.toggleTheme()
         await context.terminalUI.typeText(
-          `Theme switched to ${context.themeManager.getTheme()} mode\n`,
-          0
+          `Theme switched to ${context.themeManager.getTheme()} mode\n`
         )
       },
     },
@@ -147,24 +147,27 @@ export function createDefaultCommands(): Command[] {
     {
       name: 'exit',
       description: 'Exit the terminal',
+      hidden: true,
       execute: async context => {
-        await context.terminalUI.typeText('Goodbye!\n', 0)
+        await context.terminalUI.typeText('Goodbye!\n')
         context.terminalUI.showBSOD()
       },
     },
     {
       name: 'sudo',
       description: 'Try to gain root access',
+      hidden: true,
       execute: async context => {
-        await context.terminalUI.typeText('Nice try! ;)\n', 0)
+        await context.terminalUI.typeText('Nice try! ;)\n')
       },
     },
     {
       name: 'rm',
       description: 'Remove files (not really)',
+      hidden: true,
       aliases: ['rm -rf', 'rm -rf /', 'rm -rf /*'],
       execute: async context => {
-        await context.terminalUI.typeText("I don't think so...\n", 0)
+        await context.terminalUI.typeText("I don't think so...\n")
         context.terminalUI.showBSOD()
       },
     },
@@ -178,3 +181,6 @@ export function createCommandRegistry(): CommandRegistry {
   }
   return registry
 }
+
+// Re-export UI.PROMPT for use in InputHandler
+export { UI }

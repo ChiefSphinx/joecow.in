@@ -37,13 +37,6 @@ export interface TerminalContent {
     asciiArt?: string[];
     mobileAsciiArt?: string[];
   };
-  help: {
-    title: string;
-    commands: Array<{
-      command: string;
-      description: string;
-    }>;
-  };
   files: string[];
 }
 
@@ -101,24 +94,13 @@ function isCVData(value: unknown): value is CVData {
 function isTerminalContent(value: unknown): value is TerminalContent {
   if (typeof value !== 'object' || value === null) return false;
   const obj = value as Record<string, unknown>;
-  
+
   const welcome = obj.welcome;
   if (typeof welcome !== 'object' || welcome === null) return false;
   const welcomeObj = welcome as Record<string, unknown>;
   if (!isString(welcomeObj.greeting) || !isString(welcomeObj.instruction)) return false;
   if (welcomeObj.asciiArt !== undefined && !isStringArray(welcomeObj.asciiArt)) return false;
   if (welcomeObj.mobileAsciiArt !== undefined && !isStringArray(welcomeObj.mobileAsciiArt)) return false;
-
-  const help = obj.help;
-  if (typeof help !== 'object' || help === null) return false;
-  const helpObj = help as Record<string, unknown>;
-  if (!isString(helpObj.title)) return false;
-  if (!Array.isArray(helpObj.commands)) return false;
-  for (const cmd of helpObj.commands) {
-    if (typeof cmd !== 'object' || cmd === null) return false;
-    const cmdObj = cmd as Record<string, unknown>;
-    if (!isString(cmdObj.command) || !isString(cmdObj.description)) return false;
-  }
 
   return isStringArray(obj.files);
 }
@@ -150,7 +132,7 @@ export function getTerminalContent(): TerminalContent {
 
 export function formatCV(): string {
   const cv = getCVData();
-  
+
   let content = `\nName: ${cv.name}\n`;
   content += `Title: ${cv.title}\n`;
   content += `About: ${cv.about}\n\n`;
@@ -187,18 +169,6 @@ export function formatCV(): string {
   return content;
 }
 
-export function formatHelp(): string {
-  const terminal = getTerminalContent();
-  
-  let content = `\n${terminal.help.title}\n`;
-  terminal.help.commands.forEach(cmd => {
-    const padding = ' '.repeat(Math.max(2, 14 - cmd.command.length));
-    content += `  ${cmd.command}${padding}- ${cmd.description}\n`;
-  });
-  
-  return content;
-}
-
 export function formatFiles(): string {
   const terminal = getTerminalContent();
   return `\n${terminal.files.join('\n')}\n`;
@@ -212,6 +182,6 @@ export function getWelcomeMessages(isMobile = false): { greeting: string; instru
   return {
     greeting: terminal.welcome.greeting,
     instruction: terminal.welcome.instruction,
-    asciiArt
+    asciiArt,
   };
 }
