@@ -254,15 +254,24 @@ export class InputHandler implements InputHandlerInterface {
     document.removeEventListener('keydown', this.keydownHandler)
     if (this.keyboardResizeHandler && window.visualViewport) {
       window.visualViewport.removeEventListener('resize', this.keyboardResizeHandler)
+      window.visualViewport.removeEventListener('scroll', this.keyboardResizeHandler)
     }
   }
 
   private setupKeyboardVisibilityHandler(): void {
     if (window.visualViewport) {
-      const updateKeyboardHeight = () => {
+      const updateLayout = () => {
         if (!window.visualViewport) return
-        const keyboardHeight = Math.max(0, window.innerHeight - window.visualViewport.height)
+        const vv = window.visualViewport
+        const keyboardHeight = Math.max(0, window.innerHeight - vv.height)
+
         document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`)
+
+        // Resize #app to match the visual viewport so the keyboard never overlaps the terminal
+        const app = document.getElementById('app')
+        if (app) {
+          app.style.height = keyboardHeight > 0 ? `${vv.height}px` : ''
+        }
 
         const terminalBody = document.querySelector('.terminal-body')
         if (terminalBody) {
@@ -275,18 +284,19 @@ export class InputHandler implements InputHandlerInterface {
       }
 
       this.keyboardResizeHandler = () => {
-        updateKeyboardHeight()
+        updateLayout()
+        // Double rAF ensures the browser has finished reflowing before we scroll
         requestAnimationFrame(() => {
-          this.terminalUI.scrollToBottom(false)
-          const inputLine = this.terminalUI.getInputLine()
-          if (inputLine && document.activeElement === this.terminalUI.getMobileInput()) {
-            inputLine.scrollIntoView({ behavior: 'instant', block: 'end' })
-          }
+          requestAnimationFrame(() => {
+            this.terminalUI.scrollToBottom(false)
+          })
         })
       }
 
       window.visualViewport.addEventListener('resize', this.keyboardResizeHandler)
-      updateKeyboardHeight()
+      // iOS can also fire scroll on the visual viewport when the keyboard slides up
+      window.visualViewport.addEventListener('scroll', this.keyboardResizeHandler)
+      updateLayout()
     }
   }
 }

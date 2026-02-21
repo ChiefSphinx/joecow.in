@@ -521,14 +521,8 @@ a:hover {
   }
 
   .terminal-body {
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px) + var(--keyboard-height));
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-    transition: padding-bottom 0.15s ease-out;
-  }
-
-  .terminal-body.keyboard-open {
-    scroll-padding-bottom: calc(60px + var(--keyboard-height));
   }
 
   .terminal-header {

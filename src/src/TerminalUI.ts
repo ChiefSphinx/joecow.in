@@ -175,23 +175,11 @@ export class TerminalUI implements TerminalUIInterface {
     this.outputContainer.innerHTML = ''
   }
 
-  scrollToBottom(smooth: boolean = true): void {
+  scrollToBottom(_smooth: boolean = true): void {
     requestAnimationFrame(() => {
       const terminalBody = this.container.querySelector<HTMLDivElement>('.terminal-body')
       if (!terminalBody) return
-
-      const inputRect = this.inputLine.getBoundingClientRect()
-      const bodyRect = terminalBody.getBoundingClientRect()
-      const isVisible = inputRect.bottom <= bodyRect.bottom + 50
-
-      if (isVisible && !smooth) return
-
       terminalBody.scrollTop = terminalBody.scrollHeight
-      this.container.scrollTop = this.container.scrollHeight
-
-      if (this.inputLine.isConnected) {
-        this.inputLine.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant', block: 'end' })
-      }
     })
   }
 
