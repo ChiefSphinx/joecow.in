@@ -1,7 +1,6 @@
-variable "account_name" {
-  description = "The name of the Cloudflare account"
+variable "account_id" {
+  description = "The Cloudflare account ID"
   type        = string
-  default     = "joecow.in"
 }
 
 variable "project_name" {
