@@ -479,20 +479,25 @@ a:hover {
     background: transparent;
     border: none;
     color: transparent;
-    caret-color: var(--text-primary);
+    caret-color: transparent;
     font-family: 'Fira Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 16px;
     pointer-events: auto;
     z-index: 10;
     box-sizing: border-box;
     outline: none;
+    border-radius: 0;
     -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .mobile-input:focus {
-    opacity: 1;
+    opacity: 0;
     color: transparent;
     background: transparent;
+    outline: none;
+    box-shadow: none;
   }
 
   .mobile-input::placeholder {
