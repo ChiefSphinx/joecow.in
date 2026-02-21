@@ -1,11 +1,22 @@
 # Infrastructure
 
-This directory contains the infrastructure-as-code (IaC) configuration for provisioning and managing cloud resources for this project.
+This directory contains Terraform configuration for provisioning Cloudflare resources.
 
-## Contents
-- `main.tf`: Main Terraform configuration file.
-- `resourcegroup.tf`: Defines the Azure resource group.
-- `variables.tf`: Input variables for Terraform modules and resources.
+## Files
+
+- `main.tf` - Terraform configuration and provider setup
+- `cloudflare.tf` - Cloudflare zone and Pages project resources
+- `dns.tf` - DNS records for the domain
+- `variables.tf` - Input variables for Terraform
+
+## Resources Provisioned
+
+| Resource | Description |
+|----------|-------------|
+| `cloudflare_zone.joecowin` | DNS zone for joecow.in |
+| `cloudflare_pages_project.joecowin` | Cloudflare Pages project |
+| `cloudflare_dns_record.root` | CNAME record for @ → joecowin.pages.dev |
+| `cloudflare_dns_record.www` | CNAME record for www → joecowin.pages.dev |
 
 ## Usage
 
@@ -20,4 +31,4 @@ This directory contains the infrastructure-as-code (IaC) configuration for provi
    terraform apply
    ```
 
-> **Note:** State files and sensitive files are ignored via `.gitignore` in this directory. 
+> **Note:** State files and sensitive files are ignored via `.gitignore` in this directory.

@@ -5,7 +5,7 @@ import { TerminalUI } from './TerminalUI'
 import { InputHandler } from './InputHandler'
 import { SnakeIntegration } from './SnakeIntegration'
 import { createCommandRegistry } from './CommandRegistry'
-import { getWelcomeMessages } from '../utils/content-loader'
+import { getWelcomeMessages } from './utils/content-loader'
 import { TIMING } from './types'
 
 declare global {

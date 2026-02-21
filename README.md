@@ -9,6 +9,14 @@ This repository contains the source code for my personal website, featuring a un
   - TypeScript (vanilla)
   - Node.js
 
+- **Testing:**
+  - Vitest (unit tests)
+  - Playwright (E2E tests)
+
+- **Code Quality:**
+  - ESLint
+  - Prettier
+
 - **Infrastructure:**
   - Cloudflare Pages
   - Terraform (IaC)
@@ -17,31 +25,58 @@ This repository contains the source code for my personal website, featuring a un
 ## Project Structure
 ```
 ├── .github/
-│   ├── workflows/ # GitHub Actions workflows
+│   ├── workflows/
 │   │   └── cloudflare-pages.yml
 │   └── pull_request_template.md
-├── infrastructure/ # Terraform templates
+├── infrastructure/
+│   ├── cloudflare.tf
+│   ├── dns.tf
 │   ├── main.tf
 │   ├── variables.tf
 │   ├── .gitignore
 │   └── README.md
-├── src/ # Vite application (Node.js)
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── tsconfig.json
-│   ├── public/
+├── src/
+│   ├── src/                    # Application source
+│   │   ├── TerminalUI.ts
+│   │   ├── CommandRegistry.ts
+│   │   ├── ThemeManager.ts
+│   │   ├── InputHandler.ts
+│   │   ├── SnakeIntegration.ts
+│   │   ├── main.ts
+│   │   ├── snake.ts
+│   │   ├── posthog.ts
+│   │   ├── types.ts
+│   │   ├── vite-env.d.ts
+│   │   └── utils/              # Utility functions
+│   │       └── content-loader.ts
+│   ├── tests/                  # Tests
+│   │   ├── setup.ts
+│   │   ├── CommandRegistry.test.ts
+│   │   ├── ThemeManager.test.ts
+│   │   ├── content-loader.test.ts
+│   │   ├── snake.test.ts
+│   │   └── e2e/              # E2E tests
+│   │       └── terminal.spec.ts
+│   ├── data/                   # JSON content files
+│   │   ├── cv.json
+│   │   ├── terminal-content.json
+│   │   └── README.md
+│   ├── public/                 # Static assets
 │   │   ├── favicon.ico
+│   │   ├── og-image.png
+│   │   ├── robots.txt
+│   │   ├── sitemap.xml
 │   │   ├── _headers
 │   │   └── _routes.json
-│   ├── src/
-│   │   ├── main.ts
-│   │   ├── posthog.ts
-│   │   ├── snake.ts
-│   │   ├── style.css
-│   │   └── vite-env.d.ts
-│   └── utils/
-│       └── content-loader.ts
-├── .gitignore
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   ├── vitest.config.ts
+│   ├── playwright.config.ts
+│   ├── eslint.config.mjs
+│   ├── .prettierrc
+│   └── .gitignore
+├── LICENSE
 └── README.md
 ```
 
@@ -62,6 +97,39 @@ npm install
 npm run dev
 ```
 The application will be available at http://localhost:5173 (or the port specified by Vite).
+
+## Testing
+
+Run from the `src` directory:
+
+**Unit tests (Vitest):**
+```bash
+npm run test
+```
+
+**E2E tests (Playwright):**
+```bash
+npm run test:e2e
+```
+
+## Code Quality
+
+Run from the `src` directory:
+
+**Linting:**
+```bash
+npm run lint
+```
+
+**Type checking:**
+```bash
+npm run typecheck
+```
+
+**Formatting:**
+```bash
+npm run format
+```
 
 ## Infrastructure Deployment
 

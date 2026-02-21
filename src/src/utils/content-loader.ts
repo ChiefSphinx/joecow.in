@@ -1,5 +1,5 @@
-import cvData from '../data/cv.json';
-import terminalContent from '../data/terminal-content.json';
+import cvData from '../../data/cv.json';
+import terminalContent from '../../data/terminal-content.json';
 
 export interface CVData {
   name: string;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatCV, formatFiles, formatHelp, getWelcomeMessages, getCVData, getTerminalContent } from '../utils/content-loader'
+import { formatCV, formatFiles, formatHelp, getWelcomeMessages, getCVData, getTerminalContent } from '../src/utils/content-loader'
 
 describe('content data', () => {
   it('cv.json has required fields', () => {

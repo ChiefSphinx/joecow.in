@@ -1,5 +1,5 @@
 import type { Command, CommandContext } from './types'
-import { formatCV, formatHelp, formatFiles } from '../utils/content-loader'
+import { formatCV, formatHelp, formatFiles } from './utils/content-loader'
 import { trackCommandUsage } from './posthog'
 
 export class CommandRegistry {
