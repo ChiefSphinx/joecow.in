@@ -72,25 +72,26 @@ export class SnakeIntegration implements SnakeIntegrationInterface {
 
     outputContainer.appendChild(this.snakeMobileControls)
 
-    const simulateKey = (key: string) => {
+    const simulateKey = (key: string, e: Event) => {
+      e.stopPropagation()
       window.dispatchEvent(new KeyboardEvent('keydown', { key }))
     }
 
     this.snakeMobileControls
       .querySelector('.up')
-      ?.addEventListener('click', () => simulateKey('ArrowUp'))
+      ?.addEventListener('click', e => simulateKey('ArrowUp', e))
     this.snakeMobileControls
       .querySelector('.down')
-      ?.addEventListener('click', () => simulateKey('ArrowDown'))
+      ?.addEventListener('click', e => simulateKey('ArrowDown', e))
     this.snakeMobileControls
       .querySelector('.left')
-      ?.addEventListener('click', () => simulateKey('ArrowLeft'))
+      ?.addEventListener('click', e => simulateKey('ArrowLeft', e))
     this.snakeMobileControls
       .querySelector('.right')
-      ?.addEventListener('click', () => simulateKey('ArrowRight'))
+      ?.addEventListener('click', e => simulateKey('ArrowRight', e))
     this.snakeMobileControls
       .querySelector('.snake-exit-btn')
-      ?.addEventListener('click', () => simulateKey('Escape'))
+      ?.addEventListener('click', e => simulateKey('Escape', e))
   }
 
   private removeSnakeMobileControls(): void {

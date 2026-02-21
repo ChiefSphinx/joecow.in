@@ -46,7 +46,7 @@ export class InputHandler implements InputHandlerInterface {
     const terminalBody = document.querySelector('.terminal-body') as HTMLDivElement | null
     if (terminalBody) {
       terminalBody.addEventListener('click', () => {
-        if (!this.snakeActive && !this.terminalUI.isTyping()) {
+        if (!this.snakeIntegration.isActive() && !this.terminalUI.isTyping()) {
           this.terminalUI.getMobileInput().focus()
         }
       })
