@@ -24,6 +24,7 @@ export class InputHandler implements InputHandlerInterface {
     tabCompletionIndex: -1,
     lastTabInput: '',
   }
+  private keyboardResizeHandler: (() => void) | null = null
 
   constructor(
     terminalUI: TerminalUIInterface,
@@ -37,6 +38,7 @@ export class InputHandler implements InputHandlerInterface {
     this.snakeIntegration = snakeIntegration
     this.keydownHandler = this.handleKeydown.bind(this)
     this.setupMobileInput()
+    this.setupKeyboardVisibilityHandler()
     document.addEventListener('keydown', this.keydownHandler)
   }
 
@@ -236,5 +238,17 @@ export class InputHandler implements InputHandlerInterface {
 
   destroy(): void {
     document.removeEventListener('keydown', this.keydownHandler)
+    if (this.keyboardResizeHandler && window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', this.keyboardResizeHandler)
+    }
+  }
+
+  private setupKeyboardVisibilityHandler(): void {
+    if (window.visualViewport) {
+      this.keyboardResizeHandler = () => {
+        this.terminalUI.scrollToBottom(false)
+      }
+      window.visualViewport.addEventListener('resize', this.keyboardResizeHandler)
+    }
   }
 }

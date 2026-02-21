@@ -14,6 +14,12 @@ declare global {
   }
 }
 
+const MOBILE_BREAKPOINT = 480
+
+function isMobileViewport(): boolean {
+  return window.innerWidth < MOBILE_BREAKPOINT
+}
+
 setTimeout(() => {
   initPostHog()
 }, TIMING.POSTHOG_DELAY)
@@ -49,7 +55,7 @@ class Terminal {
   }
 
   private async startTerminal(): Promise<void> {
-    const welcome = getWelcomeMessages()
+    const welcome = getWelcomeMessages(isMobileViewport())
     if (welcome.asciiArt && welcome.asciiArt.length > 0) {
       await this.terminalUI.typeText('\n', 0)
       for (const line of welcome.asciiArt) {

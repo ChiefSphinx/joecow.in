@@ -16,6 +16,13 @@ describe('content data', () => {
     expect(terminal).toHaveProperty('help')
     expect(terminal).toHaveProperty('files')
   })
+
+  it('terminal-content.json has mobile ASCII art', () => {
+    const terminal = getTerminalContent()
+    expect(terminal.welcome).toHaveProperty('mobileAsciiArt')
+    expect(Array.isArray(terminal.welcome.mobileAsciiArt)).toBe(true)
+    expect(terminal.welcome.mobileAsciiArt?.length).toBeGreaterThan(0)
+  })
 })
 
 describe('content-loader formatting', () => {
@@ -49,6 +56,37 @@ describe('content-loader formatting', () => {
     const w = getWelcomeMessages()
     expect(w.greeting).toBe(terminal.welcome.greeting)
     expect(w.instruction).toBe(terminal.welcome.instruction)
+  })
+
+  it('getWelcomeMessages returns desktop ASCII art when isMobile is false', () => {
+    const terminal = getTerminalContent()
+    const w = getWelcomeMessages(false)
+    expect(w.asciiArt).toEqual(terminal.welcome.asciiArt)
+  })
+
+  it('getWelcomeMessages returns mobile ASCII art when isMobile is true', () => {
+    const terminal = getTerminalContent()
+    const w = getWelcomeMessages(true)
+    expect(w.asciiArt).toEqual(terminal.welcome.mobileAsciiArt)
+  })
+
+  it('mobile ASCII art width is <= 32 characters', () => {
+    const terminal = getTerminalContent()
+    const mobileArt = terminal.welcome.mobileAsciiArt
+    if (mobileArt) {
+      for (const line of mobileArt) {
+        expect(line.length).toBeLessThanOrEqual(32)
+      }
+    }
+  })
+
+  it('desktop ASCII art contains full JOE COWIN banner', () => {
+    const terminal = getTerminalContent()
+    const desktopArt = terminal.welcome.asciiArt
+    if (desktopArt) {
+      const joined = desktopArt.join('\n')
+      expect(joined).toContain('█████')
+    }
   })
 })
 

@@ -35,6 +35,7 @@ export interface TerminalContent {
     greeting: string;
     instruction: string;
     asciiArt?: string[];
+    mobileAsciiArt?: string[];
   };
   help: {
     title: string;
@@ -106,6 +107,7 @@ function isTerminalContent(value: unknown): value is TerminalContent {
   const welcomeObj = welcome as Record<string, unknown>;
   if (!isString(welcomeObj.greeting) || !isString(welcomeObj.instruction)) return false;
   if (welcomeObj.asciiArt !== undefined && !isStringArray(welcomeObj.asciiArt)) return false;
+  if (welcomeObj.mobileAsciiArt !== undefined && !isStringArray(welcomeObj.mobileAsciiArt)) return false;
 
   const help = obj.help;
   if (typeof help !== 'object' || help === null) return false;
@@ -202,11 +204,14 @@ export function formatFiles(): string {
   return `\n${terminal.files.join('\n')}\n`;
 }
 
-export function getWelcomeMessages(): { greeting: string; instruction: string; asciiArt?: string[] } {
+export function getWelcomeMessages(isMobile = false): { greeting: string; instruction: string; asciiArt?: string[] } {
   const terminal = getTerminalContent();
+  const asciiArt = isMobile && terminal.welcome.mobileAsciiArt
+    ? terminal.welcome.mobileAsciiArt
+    : terminal.welcome.asciiArt;
   return {
     greeting: terminal.welcome.greeting,
     instruction: terminal.welcome.instruction,
-    asciiArt: terminal.welcome.asciiArt
+    asciiArt
   };
 }

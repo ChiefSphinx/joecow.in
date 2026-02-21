@@ -1,31 +1,22 @@
 import { test, expect } from '@playwright/test'
 
-// Minimal smoke tests for the terminal UI
-
 test('loads and shows welcome, prompt, and can run basic commands', async ({ page }) => {
   await page.goto('/')
-  // Welcome text should appear
   await expect(page.getByText("Welcome to Joe Cowin's Terminal")).toBeVisible()
   await expect(page.locator('#terminal-input-line')).toBeVisible()
 
-  // Type 'help' and press Enter
   await page.keyboard.type('help')
   await page.keyboard.press('Enter')
   await expect(page.getByText('Available commands:')).toBeVisible()
 
-  // Type 'cv' and press Enter - expect name appears
   await page.keyboard.type('cv')
   await page.keyboard.press('Enter')
   await expect(page.getByText('Name: Joe Cowin')).toBeVisible()
 
-  // Clear output
   await page.keyboard.type('clear')
   await page.keyboard.press('Enter')
-  // After clear, there should still be a prompt
   await expect(page.locator('#terminal-input-line')).toBeVisible()
 })
-
-// E2E: start snake and exit with ESC, then prompt returns
 
 test('snake game can start and exit with ESC to restore prompt', async ({ page }) => {
   await page.goto('/')
@@ -34,31 +25,89 @@ test('snake game can start and exit with ESC to restore prompt', async ({ page }
   await page.keyboard.type('snake')
   await page.keyboard.press('Enter')
 
-  // Snake container should appear
   const snakeContainer = page.locator('.snake-terminal-container')
   await expect(snakeContainer).toBeVisible()
 
-  // Press Escape to exit
   await page.keyboard.press('Escape')
 
-  // Snake container should disappear and prompt should be visible again
   await expect(snakeContainer).toHaveCount(0)
   await expect(page.locator('#terminal-input-line')).toBeVisible()
 })
-
-// E2E: BSOD close button triggers restart back to terminal
 
 test('BSOD flow restarts back to terminal', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator('#terminal-input-line')).toBeVisible()
 
-  // Click the close button to trigger BSOD
   await page.locator('#close-btn').click()
 
-  // Expect BSOD content
   await expect(page.locator('.bsod')).toBeVisible()
 
-  // Wait for restart: terminal should reappear with welcome or prompt
   await expect(page.locator('#terminal-input-line')).toBeVisible({ timeout: 15000 })
+})
+
+test.describe('Mobile viewport (375x667)', () => {
+  test.use({ viewport: { width: 375, height: 667 } })
+
+  test('shows condensed ASCII art on mobile', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('.output-line').getByText('Joe Cowin').first()).toBeVisible()
+    await expect(page.locator('.output-line').getByText('DevSecOps Engineer').first()).toBeVisible()
+  })
+
+  test('does not show full desktop ASCII art on mobile', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByText('██╗ ██████╗')).not.toBeVisible()
+  })
+
+  test('mobile input is visible and functional', async ({ page }) => {
+    await page.goto('/')
+    const mobileInput = page.locator('#mobile-input')
+    await expect(mobileInput).toBeVisible()
+    await mobileInput.fill('help')
+    await mobileInput.press('Enter')
+    await expect(page.getByText('Available commands:')).toBeVisible()
+  })
+
+  test('tapping terminal body focuses mobile input', async ({ page }) => {
+    await page.goto('/')
+    await page.locator('.terminal-body').click()
+    const mobileInput = page.locator('#mobile-input')
+    await expect(mobileInput).toBeFocused()
+  })
+
+  test('mobile input has font-size >= 16px to prevent iOS zoom', async ({ page }) => {
+    await page.goto('/')
+    const mobileInput = page.locator('#mobile-input')
+    const fontSize = await mobileInput.evaluate(el => 
+      window.getComputedStyle(el).fontSize
+    )
+    expect(parseInt(fontSize)).toBeGreaterThanOrEqual(16)
+  })
+
+  test('snake game shows mobile controls on mobile', async ({ page }) => {
+    await page.goto('/')
+    await page.locator('#mobile-input').fill('snake')
+    await page.locator('#mobile-input').press('Enter')
+    await expect(page.locator('.snake-mobile-controls')).toBeVisible()
+    await expect(page.locator('.snake-dpad')).toBeVisible()
+  })
+})
+
+test.describe('Desktop viewport (1280x720)', () => {
+  test.use({ viewport: { width: 1280, height: 720 } })
+
+  test('shows full ASCII art on desktop', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByText('██╗ ██████╗')).toBeVisible()
+  })
+
+  test('mobile input is hidden on desktop', async ({ page }) => {
+    await page.goto('/')
+    const mobileInput = page.locator('#mobile-input')
+    const opacity = await mobileInput.evaluate(el => 
+      window.getComputedStyle(el).opacity
+    )
+    expect(parseFloat(opacity)).toBe(0)
+  })
 })
 
