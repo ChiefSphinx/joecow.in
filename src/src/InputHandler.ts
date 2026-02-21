@@ -81,18 +81,17 @@ export class InputHandler implements InputHandlerInterface {
     })
 
     mobileInput.addEventListener('focus', () => {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.terminalUI.scrollToBottom(false)
-      }, 350)
+      })
     })
 
     mobileInput.addEventListener('blur', () => {
-      setTimeout(() => {
-        this.terminalUI.scrollToBottom(false)
-        window.scrollTo(0, 0)
-        document.body.scrollTop = 0
-        document.documentElement.scrollTop = 0
-      }, 100)
+      document.documentElement.style.setProperty('--keyboard-height', '0px')
+      const terminalBody = document.querySelector('.terminal-body')
+      if (terminalBody) {
+        terminalBody.classList.remove('keyboard-open')
+      }
     })
   }
 
@@ -260,28 +259,34 @@ export class InputHandler implements InputHandlerInterface {
 
   private setupKeyboardVisibilityHandler(): void {
     if (window.visualViewport) {
-      let previousHeight = window.visualViewport.height
+      const updateKeyboardHeight = () => {
+        if (!window.visualViewport) return
+        const keyboardHeight = Math.max(0, window.innerHeight - window.visualViewport.height)
+        document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`)
+
+        const terminalBody = document.querySelector('.terminal-body')
+        if (terminalBody) {
+          if (keyboardHeight > 0) {
+            terminalBody.classList.add('keyboard-open')
+          } else {
+            terminalBody.classList.remove('keyboard-open')
+          }
+        }
+      }
 
       this.keyboardResizeHandler = () => {
-        if (!window.visualViewport) return
-        const currentHeight = window.visualViewport.height
-        const keyboardOpening = currentHeight < previousHeight
-        const keyboardClosing = currentHeight > previousHeight
-
-        if (keyboardOpening) {
-          setTimeout(() => {
-            this.terminalUI.scrollToBottom(false)
-          }, 100)
-        } else if (keyboardClosing) {
-          setTimeout(() => {
-            this.terminalUI.scrollToBottom(false)
-            window.scrollTo(0, 0)
-          }, 100)
-        }
-
-        previousHeight = currentHeight
+        updateKeyboardHeight()
+        requestAnimationFrame(() => {
+          this.terminalUI.scrollToBottom(false)
+          const inputLine = this.terminalUI.getInputLine()
+          if (inputLine && document.activeElement === this.terminalUI.getMobileInput()) {
+            inputLine.scrollIntoView({ behavior: 'instant', block: 'end' })
+          }
+        })
       }
+
       window.visualViewport.addEventListener('resize', this.keyboardResizeHandler)
+      updateKeyboardHeight()
     }
   }
 }
