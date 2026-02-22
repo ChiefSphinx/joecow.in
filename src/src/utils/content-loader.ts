@@ -172,6 +172,7 @@ export function formatCV(): string {
   cv.experience.forEach(exp => {
     content += `  ${exp.company}`;
     if (exp.location) content += ` | ${exp.location}`;
+    if (exp.duration) content += ` (${exp.duration})`;
     content += `\n`;
 
     exp.positions.forEach(position => {
@@ -212,6 +213,15 @@ export function formatCV(): string {
   content += `  GitHub:   ${cv.contact.github}\n`;
   content += `  LinkedIn: ${cv.contact.linkedin}\n`;
 
+  return content;
+}
+
+export function formatContact(): string {
+  const cv = getCVData();
+  let content = '\nContact Information:\n';
+  content += `  Email:    ${cv.contact.email}\n`;
+  content += `  GitHub:   ${cv.contact.github}\n`;
+  content += `  LinkedIn: ${cv.contact.linkedin}\n`;
   return content;
 }
 

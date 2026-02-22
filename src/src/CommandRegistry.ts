@@ -1,6 +1,6 @@
 import type { Command, CommandContext } from './types'
 import { UI } from './types'
-import { formatCV, formatFiles } from './utils/content-loader'
+import { formatCV, formatFiles, formatContact } from './utils/content-loader'
 import { trackCommandUsage } from './posthog'
 
 export class CommandRegistry {
@@ -114,6 +114,14 @@ export function createDefaultCommands(): Command[] {
       },
     },
     {
+      name: 'contact',
+      description: 'Show contact information',
+      aliases: ['cat contact.txt'],
+      execute: async context => {
+        await context.terminalUI.typeText(formatContact())
+      },
+    },
+    {
       name: 'whoami',
       description: 'Display current user',
       execute: async context => {
@@ -169,6 +177,23 @@ export function createDefaultCommands(): Command[] {
       execute: async context => {
         await context.terminalUI.typeText("I don't think so...\n")
         context.terminalUI.showBSOD()
+      },
+    },
+    {
+      name: 'neofetch',
+      description: 'System information',
+      hidden: true,
+      execute: async context => {
+        const theme = context.themeManager.getTheme()
+        const res = `${window.innerWidth}x${window.innerHeight}`
+        const content =
+          `\njoe@joecow.in\n` +
+          `─────────────\n` +
+          `OS:         joecow.in Terminal\n` +
+          `Shell:      browser\n` +
+          `Theme:      ${theme}\n` +
+          `Resolution: ${res}\n`
+        await context.terminalUI.typeText(content)
       },
     },
   ]

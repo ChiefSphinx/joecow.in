@@ -84,9 +84,11 @@ export class SnakeGame {
     if (this.food) {
       if (this.food.x >= this.cols || this.food.y >= this.rows) this.placeFood()
     }
-    // Redraw start screen if waiting
+    // Redraw appropriate screen on resize
     if (this.isWaitingToStart) {
       this.drawStartScreen()
+    } else if (this.isGameOver) {
+      this.drawGameOver()
     }
   }
 
@@ -116,11 +118,32 @@ export class SnakeGame {
     window.removeEventListener('keydown', this.handleKey)
   }
   private handleKey = (e: KeyboardEvent) => {
-    // ESC exits the game immediately
+    // ESC always exits immediately
     if (e.key === 'Escape') {
-      this.isGameOver = true
       this.unlisten()
       this.destroy()
+      return
+    }
+
+    // Game over: restart on any movement key / Enter / Space
+    if (this.isGameOver) {
+      const restartKeys = [
+        'Enter',
+        ' ',
+        'r',
+        'R',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'w',
+        'a',
+        's',
+        'd',
+      ]
+      if (restartKeys.includes(e.key)) {
+        this.restart()
+      }
       return
     }
 
@@ -139,7 +162,6 @@ export class SnakeGame {
         'Enter',
       ]
       if (validStartKeys.includes(e.key)) {
-        // Determine starting direction
         let dir = { x: 1, y: 0 } // default right
         if (['ArrowUp', 'w'].includes(e.key)) {
           dir = { x: 0, y: -1 }
@@ -175,7 +197,7 @@ export class SnakeGame {
         newDir = { x: 1, y: 0 }
         break
     }
-    if (newDir && !this.isGameOver) {
+    if (newDir) {
       // Prevent reversing
       if (
         this.snake.length > 1 &&
@@ -188,11 +210,17 @@ export class SnakeGame {
     }
   }
 
+  private restart() {
+    this.reset()
+    this.isWaitingToStart = true
+    this.drawStartScreen()
+  }
+
   private loop = () => {
     if (this.destroyed) return
     if (this.isGameOver) {
       this.drawGameOver()
-      this.destroy()
+      // Stay alive — wait for player input (restart or exit) instead of auto-destroying
       return
     }
     this.update()
@@ -211,13 +239,11 @@ export class SnakeGame {
     // Check collision with walls
     if (head.x < 0 || head.x >= this.cols || head.y < 0 || head.y >= this.rows) {
       this.isGameOver = true
-      this.unlisten()
       return
     }
     // Check collision with self
     if (this.snake.some(s => s.x === head.x && s.y === head.y)) {
       this.isGameOver = true
-      this.unlisten()
       return
     }
     this.snake.unshift(head)
@@ -274,13 +300,39 @@ export class SnakeGame {
   }
 
   private drawGameOver() {
+    if (this.disableDraw) return
+
+    // Draw the final board state underneath the overlay
     this.draw()
+
+    // Semi-transparent overlay matching the start screen
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+    this.ctx.fillRect(0, 0, this.width, this.height)
+
+    // "GAME OVER" heading
     this.ctx.fillStyle = '#f00'
-    this.ctx.font = '32px Fira Mono, monospace'
+    this.ctx.font = 'bold 32px Fira Mono, monospace'
     this.ctx.textAlign = 'center'
-    this.ctx.fillText('Game Over', this.width / 2, this.height / 2)
-    this.ctx.font = '18px Fira Mono, monospace'
+    this.ctx.fillText('GAME OVER', this.width / 2, this.height / 2 - 40)
+
+    // Final score
     this.ctx.fillStyle = '#fff'
+    this.ctx.font = '20px Fira Mono, monospace'
+    this.ctx.fillText(`Score: ${this.score}`, this.width / 2, this.height / 2 + 5)
+
+    // Restart hint
+    this.ctx.fillStyle = '#0f0'
+    this.ctx.font = '16px Fira Mono, monospace'
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+    const restartText = isMobile ? 'Tap a direction to play again' : 'R or Enter to play again'
+    this.ctx.fillText(restartText, this.width / 2, this.height / 2 + 40)
+
+    // Exit hint
+    this.ctx.fillStyle = '#888'
+    this.ctx.font = '14px Fira Mono, monospace'
+    const exitText = isMobile ? 'Tap EXIT to quit' : 'ESC to exit'
+    this.ctx.fillText(exitText, this.width / 2, this.height / 2 + 65)
+
     this.ctx.textAlign = 'start'
   }
 

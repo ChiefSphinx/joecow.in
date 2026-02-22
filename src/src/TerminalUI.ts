@@ -152,8 +152,12 @@ export class TerminalUI implements TerminalUIInterface {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
     return escaped.replace(
-      /(https?:\/\/\S+|mailto:\S+)/g,
-      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+      /(https?:\/\/\S+|mailto:\S+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,
+      (match) => {
+        const href =
+          match.startsWith('http') || match.startsWith('mailto:') ? match : `mailto:${match}`
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${match}</a>`
+      }
     )
   }
 
