@@ -30,7 +30,8 @@ test('snake game can start and exit with ESC to restore prompt', async ({ page }
 
   await page.keyboard.press('Escape')
 
-  await expect(snakeContainer).toHaveCount(0)
+  // Canvas stays in output as a tombstone after exit; terminal input is restored
+  await expect(snakeContainer).toBeVisible()
   await expect(page.locator('#terminal-input-line')).toBeVisible()
 })
 
