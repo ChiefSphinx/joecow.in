@@ -47,8 +47,6 @@ export class SnakeIntegration implements SnakeIntegrationInterface {
 
     this.snakeInstance = new SnakeGame(snakeDiv, () => {
       this.active = false
-      const container = outputContainer.querySelector('.snake-terminal-container')
-      if (container) container.remove()
       this.removeSnakeMobileControls()
       terminalUI.showPrompt()
     })

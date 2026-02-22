@@ -84,11 +84,8 @@ export class SnakeGame {
     if (this.food) {
       if (this.food.x >= this.cols || this.food.y >= this.rows) this.placeFood()
     }
-    // Redraw appropriate screen on resize
     if (this.isWaitingToStart) {
       this.drawStartScreen()
-    } else if (this.isGameOver) {
-      this.drawGameOver()
     }
   }
 
@@ -122,28 +119,6 @@ export class SnakeGame {
     if (e.key === 'Escape') {
       this.unlisten()
       this.destroy()
-      return
-    }
-
-    // Game over: restart on any movement key / Enter / Space
-    if (this.isGameOver) {
-      const restartKeys = [
-        'Enter',
-        ' ',
-        'r',
-        'R',
-        'ArrowUp',
-        'ArrowDown',
-        'ArrowLeft',
-        'ArrowRight',
-        'w',
-        'a',
-        's',
-        'd',
-      ]
-      if (restartKeys.includes(e.key)) {
-        this.restart()
-      }
       return
     }
 
@@ -210,17 +185,11 @@ export class SnakeGame {
     }
   }
 
-  private restart() {
-    this.reset()
-    this.isWaitingToStart = true
-    this.drawStartScreen()
-  }
-
   private loop = () => {
     if (this.destroyed) return
     if (this.isGameOver) {
       this.drawGameOver()
-      // Stay alive — wait for player input (restart or exit) instead of auto-destroying
+      this.destroy()
       return
     }
     this.update()
@@ -305,7 +274,7 @@ export class SnakeGame {
     // Draw the final board state underneath the overlay
     this.draw()
 
-    // Semi-transparent overlay matching the start screen
+    // Semi-transparent overlay
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
     this.ctx.fillRect(0, 0, this.width, this.height)
 
@@ -313,25 +282,17 @@ export class SnakeGame {
     this.ctx.fillStyle = '#f00'
     this.ctx.font = 'bold 32px Fira Mono, monospace'
     this.ctx.textAlign = 'center'
-    this.ctx.fillText('GAME OVER', this.width / 2, this.height / 2 - 40)
+    this.ctx.fillText('GAME OVER', this.width / 2, this.height / 2 - 30)
 
     // Final score
     this.ctx.fillStyle = '#fff'
     this.ctx.font = '20px Fira Mono, monospace'
-    this.ctx.fillText(`Score: ${this.score}`, this.width / 2, this.height / 2 + 5)
+    this.ctx.fillText(`Score: ${this.score}`, this.width / 2, this.height / 2 + 10)
 
-    // Restart hint
+    // Replay hint
     this.ctx.fillStyle = '#0f0'
     this.ctx.font = '16px Fira Mono, monospace'
-    const isMobile = window.matchMedia('(max-width: 768px)').matches
-    const restartText = isMobile ? 'Tap a direction to play again' : 'R or Enter to play again'
-    this.ctx.fillText(restartText, this.width / 2, this.height / 2 + 40)
-
-    // Exit hint
-    this.ctx.fillStyle = '#888'
-    this.ctx.font = '14px Fira Mono, monospace'
-    const exitText = isMobile ? 'Tap EXIT to quit' : 'ESC to exit'
-    this.ctx.fillText(exitText, this.width / 2, this.height / 2 + 65)
+    this.ctx.fillText("Type 'snake' to play again", this.width / 2, this.height / 2 + 45)
 
     this.ctx.textAlign = 'start'
   }
