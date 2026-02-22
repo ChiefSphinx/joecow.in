@@ -209,7 +209,7 @@ export function formatCV(): string {
 
   content += `Contact:\n`;
   content += `  Phone:    ${cv.contact.phone}\n`;
-  content += `  Email:    ${cv.contact.email}\n`;
+  content += `  Email:    mailto:${cv.contact.email}\n`;
   content += `  GitHub:   ${cv.contact.github}\n`;
   content += `  LinkedIn: ${cv.contact.linkedin}\n`;
 
@@ -219,7 +219,7 @@ export function formatCV(): string {
 export function formatContact(): string {
   const cv = getCVData();
   let content = '\nContact Information:\n';
-  content += `  Email:    ${cv.contact.email}\n`;
+  content += `  Email:    mailto:${cv.contact.email}\n`;
   content += `  GitHub:   ${cv.contact.github}\n`;
   content += `  LinkedIn: ${cv.contact.linkedin}\n`;
   return content;
