@@ -160,15 +160,15 @@ export function formatCV(): string {
 
   let content = `\n${cv.name} — ${cv.title}\n\n`;
 
-  content += `Summary:\n${cv.summary}\n\n`;
+  content += `\uf0c8 Summary:\n${cv.summary}\n\n`;
 
-  content += `Selected Achievements:\n`;
+  content += `\uf091 Selected Achievements:\n`;
   cv.selectedAchievements.forEach(a => {
     content += `  • ${a}\n`;
   });
   content += `\n`;
 
-  content += `Experience:\n\n`;
+  content += `\uf0b1 Experience:\n\n`;
   cv.experience.forEach(exp => {
     content += `  ${exp.company}`;
     if (exp.location) content += ` | ${exp.location}`;
@@ -188,46 +188,60 @@ export function formatCV(): string {
     content += `\n`;
   });
 
-  content += `Technical Skills:\n`;
+  content += `\ue796 Technical Skills:\n`;
   Object.entries(cv.technicalSkills).forEach(([category, detail]) => {
     content += `  ${category}: ${detail}\n`;
   });
   content += `\n`;
 
-  content += `Education:\n`;
+  content += `\uf19d Education:\n`;
   cv.education.forEach(edu => {
     content += `  ${edu.degree}\n`;
     content += `  ${edu.institution}, ${edu.year}\n`;
   });
   content += `\n`;
 
-  content += `Certifications:\n`;
+  content += `\uf0a3 Certifications:\n`;
   cv.certifications.forEach(cert => {
     content += `  • ${cert}\n`;
   });
   content += `\n`;
 
-  content += `Contact:\n`;
-  content += `  Phone:    ${cv.contact.phone}\n`;
-  content += `  Email:    mailto:${cv.contact.email}\n`;
-  content += `  GitHub:   ${cv.contact.github}\n`;
-  content += `  LinkedIn: ${cv.contact.linkedin}\n`;
+  content += `\uf2b5 Contact:\n`;
+  content += `  \uf095 Phone:    ${cv.contact.phone}\n`;
+  content += `  \uf0e0 Email:    mailto:${cv.contact.email}\n`;
+  content += `  \uf09b GitHub:   ${cv.contact.github}\n`;
+  content += `  \uf0e1 LinkedIn: ${cv.contact.linkedin}\n`;
 
   return content;
 }
 
 export function formatContact(): string {
   const cv = getCVData();
-  let content = '\nContact Information:\n';
-  content += `  Email:    mailto:${cv.contact.email}\n`;
-  content += `  GitHub:   ${cv.contact.github}\n`;
-  content += `  LinkedIn: ${cv.contact.linkedin}\n`;
+  let content = '\n\uf2b5 Contact Information:\n';
+  content += `  \uf0e0 Email:    mailto:${cv.contact.email}\n`;
+  content += `  \uf09b GitHub:   ${cv.contact.github}\n`;
+  content += `  \uf0e1 LinkedIn: ${cv.contact.linkedin}\n`;
   return content;
+}
+
+const FILE_ICONS: Record<string, string> = {
+  '.md': '\ue73e',    // markdown icon
+  '.txt': '\uf15c',   // file-text icon
+  '.json': '\ue60b',  // json icon
+  '.ts': '\ue628',    // typescript icon
+  '.js': '\ue74e',    // javascript icon
+};
+
+function getFileIcon(filename: string): string {
+  const ext = filename.substring(filename.lastIndexOf('.'));
+  return FILE_ICONS[ext] || '\uf15b'; // default file icon
 }
 
 export function formatFiles(): string {
   const terminal = getTerminalContent();
-  return `\n${terminal.files.join('\n')}\n`;
+  const filesWithIcons = terminal.files.map(f => `${getFileIcon(f)} ${f}`);
+  return `\n${filesWithIcons.join('\n')}\n`;
 }
 
 export function getWelcomeMessages(isMobile = false): { greeting: string; instruction: string; asciiArt?: string[] } {

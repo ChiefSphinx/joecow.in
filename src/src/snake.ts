@@ -264,7 +264,7 @@ export class SnakeGame {
     )
     // Draw score
     this.ctx.fillStyle = '#fff'
-    this.ctx.font = '16px Fira Mono, monospace'
+    this.ctx.font = '16px BigBlueTerminal Nerd Font, monospace'
     this.ctx.fillText('Score: ' + this.score, 10, 20)
   }
 
@@ -280,18 +280,18 @@ export class SnakeGame {
 
     // "GAME OVER" heading
     this.ctx.fillStyle = '#f00'
-    this.ctx.font = 'bold 32px Fira Mono, monospace'
+    this.ctx.font = 'bold 32px BigBlueTerminal Nerd Font, monospace'
     this.ctx.textAlign = 'center'
     this.ctx.fillText('GAME OVER', this.width / 2, this.height / 2 - 30)
 
     // Final score
     this.ctx.fillStyle = '#fff'
-    this.ctx.font = '20px Fira Mono, monospace'
+    this.ctx.font = '20px BigBlueTerminal Nerd Font, monospace'
     this.ctx.fillText(`Score: ${this.score}`, this.width / 2, this.height / 2 + 10)
 
     // Replay hint
     this.ctx.fillStyle = '#0f0'
-    this.ctx.font = '16px Fira Mono, monospace'
+    this.ctx.font = '16px BigBlueTerminal Nerd Font, monospace'
     this.ctx.fillText("Type 'snake' to play again", this.width / 2, this.height / 2 + 45)
 
     this.ctx.textAlign = 'start'
@@ -310,20 +310,20 @@ export class SnakeGame {
 
     // Draw title
     this.ctx.fillStyle = '#0f0'
-    this.ctx.font = 'bold 32px Fira Mono, monospace'
+    this.ctx.font = 'bold 32px BigBlueTerminal Nerd Font, monospace'
     this.ctx.textAlign = 'center'
     this.ctx.fillText('SNAKE', this.width / 2, this.height / 2 - 40)
 
     // Draw start instruction
     this.ctx.fillStyle = '#fff'
-    this.ctx.font = '18px Fira Mono, monospace'
+    this.ctx.font = '18px BigBlueTerminal Nerd Font, monospace'
     const isMobile = window.matchMedia('(max-width: 768px)').matches
     const startText = isMobile ? 'Tap a direction to start' : 'Press any arrow key to start'
     this.ctx.fillText(startText, this.width / 2, this.height / 2 + 10)
 
     // Draw controls hint
     this.ctx.fillStyle = '#888'
-    this.ctx.font = '14px Fira Mono, monospace'
+    this.ctx.font = '14px BigBlueTerminal Nerd Font, monospace'
     const controlsText = isMobile ? 'Use D-pad to control' : 'Arrow keys or WASD to move'
     this.ctx.fillText(controlsText, this.width / 2, this.height / 2 + 40)
 

@@ -1,4 +1,13 @@
+@font-face {
+  font-family: 'BigBlueTerminal Nerd Font';
+  src: url('/fonts/BigBlueTermPlusNerdFont-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --font-mono: 'BigBlueTerminal Nerd Font', 'Consolas', 'Monaco', 'Courier New', monospace;
   color-scheme: light dark;
   --bg-body: #1a1a1a;
   --bg-terminal: #000;
@@ -31,7 +40,7 @@
 body {
   background: var(--bg-body);
   color: var(--text-primary);
-  font-family: 'Fira Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-family: var(--font-mono);
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -378,7 +387,7 @@ a:hover {
 .taskbar-clock {
   color: #fff;
   font-size: 16px;
-  font-family: 'Fira Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-family: var(--font-mono);
   margin-left: auto;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
@@ -420,7 +429,7 @@ a:hover {
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
-  font-family: 'Fira Mono', monospace;
+  font-family: var(--font-mono);
 }
 .snake-header {
   display: flex;
@@ -579,7 +588,7 @@ a:hover {
     border: none;
     color: transparent;
     caret-color: transparent;
-    font-family: 'Fira Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-family: var(--font-mono);
     font-size: 16px; /* >= 16px prevents iOS auto-zoom on focus */
     pointer-events: auto;
     z-index: 10;
