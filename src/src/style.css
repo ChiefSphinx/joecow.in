@@ -151,7 +151,7 @@ body {
 
 .output-line {
   margin: 0;
-  line-height: 1.4;
+  line-height: 1;
   white-space: pre-wrap;
   word-wrap: break-word;
   color: var(--text-output);
