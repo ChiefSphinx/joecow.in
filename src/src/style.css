@@ -155,6 +155,7 @@ body {
   white-space: pre-wrap;
   word-wrap: break-word;
   color: var(--text-output);
+  letter-spacing: -1px;
 }
 
 /* Terminal Input Line */
